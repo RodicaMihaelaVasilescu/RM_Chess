@@ -61,6 +61,15 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to bishop.
+        /// </summary>
+        internal static string Bishop {
+            get {
+                return ResourceManager.GetString("Bishop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to black_bishop.
         /// </summary>
         internal static string BlackBishop {
@@ -115,11 +124,56 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to king.
+        /// </summary>
+        internal static string King {
+            get {
+                return ResourceManager.GetString("King", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to knight.
+        /// </summary>
+        internal static string Knight {
+            get {
+                return ResourceManager.GetString("Knight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to no_piece.
         /// </summary>
         internal static string NoPiece {
             get {
                 return ResourceManager.GetString("NoPiece", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to pawn.
+        /// </summary>
+        internal static string Pawn {
+            get {
+                return ResourceManager.GetString("Pawn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to queen.
+        /// </summary>
+        internal static string Queen {
+            get {
+                return ResourceManager.GetString("Queen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to rook.
+        /// </summary>
+        internal static string Rook {
+            get {
+                return ResourceManager.GetString("Rook", resourceCulture);
             }
         }
         

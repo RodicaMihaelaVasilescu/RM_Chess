@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,7 +59,18 @@
     <Compile Include="Command\RelayCommand.cs" />
     <Compile Include="Constants\ChessPieceName.cs" />
     <Compile Include="Converter\GeneralConverter.cs" />
+    <Compile Include="Mapper\ChessPieceLocation.cs" />
+    <Compile Include="Mapper\Pair.cs" />
+    <Compile Include="Model\Bishop.cs" />
+    <Compile Include="Model\ChessBoard.cs" />
+    <Compile Include="Model\ChessBoardModel.cs" />
     <Compile Include="Model\ChessBoardConfiguration.cs" />
+    <Compile Include="Model\ChessPiece.cs" />
+    <Compile Include="Model\King.cs" />
+    <Compile Include="Model\Knight.cs" />
+    <Compile Include="Model\Pawn.cs" />
+    <Compile Include="Model\Queen.cs" />
+    <Compile Include="Model\Rook.cs" />
     <Compile Include="Model\Square.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
@@ -139,6 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\available_piece.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\click.mp3" />
+    <Content Include="Resources\click.wav" />
+    <Content Include="Resources\click2.mp3" />
+    <Content Include="Resources\click2.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

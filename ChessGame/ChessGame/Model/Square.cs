@@ -9,13 +9,10 @@ using System.Windows.Media.Imaging;
 
 namespace ChessGame.Model
 {
-  class Square: INotifyPropertyChanged
+  class Square : INotifyPropertyChanged
   {
     private SolidColorBrush background;
-    private string chessPiece;
 
-
-    //public Brush Background { get; set; }
     public string Id { get; set; }
     public string ChessPieceName { get; set; }
 
@@ -37,20 +34,33 @@ namespace ChessGame.Model
       }
     }
 
-    public String ChessPiece
+    private ChessPiece piece = new ChessPiece();
+
+    public ChessPiece Piece
+    {
+      get { return piece; }
+      set
+      {
+        if (piece == value) return;
+        piece = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Piece"));
+      }
+    }
+
+ 
+    public double SquareSize { get; set; } = 60;
+
+    private String chessPiece;
+    public String ChessPieceIcon
     {
       get { return chessPiece; }
       set
       {
         if (chessPiece == value) return;
         chessPiece = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ChessPiece"));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ChessPieceIcon"));
       }
     }
 
-    public bool IsWhite { get; set; } = true;
-    public double ChessPieceSize { get; set; } = 50;
-    public double Width { get; set; } = 60;
-    public double Height { get; set; } = 60;
   }
 }

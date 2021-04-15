@@ -8,11 +8,12 @@
   Title="MainWindow"
   Width="600"
   Height="600"
+  Background="Black"
   WindowState="Maximized"
   mc:Ignorable="d">
-  <Window.Background>
+  <!--<Window.Background>
     <ImageBrush ImageSource="Resources/background3.jpg" />
-  </Window.Background>
+  </Window.Background>-->
   <Window.Resources>
 
     <Style x:Key="NoItemHighlight" TargetType="{x:Type ListViewItem}">
@@ -54,53 +55,80 @@
   </Canvas>-->
 
     <Grid>
-      <ListView
-        Name="Chessboard"
+      <Label
+        HorizontalAlignment="Center"
+        Content="{Binding Message}"
+        FontFamily="Times New Roman"
+        FontSize="40"
+        FontStyle="Oblique"
+        FontWeight="DemiBold"
+        Foreground="White" />
+      <StackPanel
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        Background="#F4F5EC"
-        BorderThickness="0"
-        ItemContainerStyle="{StaticResource NoItemHighlight}"
-        ItemsSource="{Binding ChessBoard}">
-        <ListView.ItemsPanel>
-          <ItemsPanelTemplate>
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
-          </ItemsPanelTemplate>
-        </ListView.ItemsPanel>
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ListView
-              Name="ChessboardItem"
-              Margin="0"
-              Background="Transparent"
-              BorderThickness="0"
-              ItemContainerStyle="{StaticResource ChangeListViewItemHighlight}"
-              ItemsSource="{Binding}"
-              SelectedItem="{Binding SelectedSquare, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
-              <ListView.ItemTemplate>
-                <DataTemplate>
-                  <StackPanel
-                    Width="{Binding Width}"
-                    Height="{Binding Height}"
-                    Margin="0,3,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Background="{Binding Background}"
-                    Orientation="Vertical"
-                    Tag="{Binding Id}">
-                    <Image
-                      Width="{Binding ChessPieceSize}"
-                      Height="{Binding ChessPieceSize}"
+        Orientation="Horizontal">
+        <ListView
+          Name="Chessboard"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Background="#F4F5EC"
+          BorderThickness="0"
+          ItemContainerStyle="{StaticResource NoItemHighlight}"
+          ItemsSource="{Binding ChessBoard}">
+          <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+          </ListView.ItemsPanel>
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <ListView
+                Name="ChessboardItem"
+                Margin="0"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemContainerStyle="{StaticResource ChangeListViewItemHighlight}"
+                ItemsSource="{Binding}"
+                SelectedItem="{Binding SelectedSquare, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}">
+                <ListView.ItemTemplate>
+                  <DataTemplate>
+                    <StackPanel
+                      Width="{Binding SquareSize}"
+                      Height="{Binding SquareSize}"
                       Margin="0,3,0,0"
-                      Source="{Binding ChessPiece, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      Background="{Binding Background}"
+                      Orientation="Vertical"
+                      Tag="{Binding Id}">
+                      <Image
+                        Width="{Binding Piece.Size}"
+                        Height="{Binding Piece.Size}"
+                        Margin="0,3,0,0"
+                        Source="{Binding Piece.ChessPieceIcon, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
 
-                  </StackPanel>
-                </DataTemplate>
-              </ListView.ItemTemplate>
-            </ListView>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
+                    </StackPanel>
+                  </DataTemplate>
+                </ListView.ItemTemplate>
+              </ListView>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+
+        <ListBox
+          Margin="10 0"
+          Width="300"
+          Background="DarkGray"
+          Foreground="White"
+          FontFamily="Calisto"
+          FontWeight="DemiBold"
+          FontStyle="Italic"
+          FontSize="15"
+          ItemsSource="{Binding Path=ListOfMovements}"
+          SelectedItem="{Binding Path=SelectedMovement}"
+          SelectedIndex="{Binding Path=SelectedMovementIndex}"
+          SelectedValuePath="Value" />
+      </StackPanel>
     </Grid>
 
   </Grid>

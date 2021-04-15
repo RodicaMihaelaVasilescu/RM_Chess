@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Media;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +33,7 @@ namespace ChessGame
       viewModel = new MainViewModel();
       DataContext = viewModel;
       viewModel.InitializeChessBoard();
-      
+
     }
 
     private void getSelectedItem(object sender, MouseButtonEventArgs e)
@@ -70,6 +72,10 @@ namespace ChessGame
 
       viewModel.DisplayAvailableSquares(listViewItem.Content.ToString());
 
+      //Thread beepThread = new Thread(new ThreadStart(PlayBeep));
+      //beepThread.IsBackground = true;
+      //beepThread.Start();
+
 
       //  var square2 = l.Where(c => c.Id == listViewItem.Tag.ToString()).FirstOrDefault();
 
@@ -81,11 +87,20 @@ namespace ChessGame
       //  viewModel.TextEmoticon = emoticon.Text;
       //  viewModel.CloseAction();
       //}
-      int x = 0;
+      // Starts beep on background thread
+      //if (viewModel.IsWhiteTurn)
+      //{
+
+        SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
+        simpleSound.Play();
+      //}
+      //else
+      //{
+      //  //SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click2.wav");
+      //  //simpleSound.Play();
+      //}
+
     }
-
-
-
 
   }
 }

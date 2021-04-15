@@ -1,10 +1,12 @@
-﻿using ChessGame.Model;
+﻿using ChessGame.Mapper;
+using ChessGame.Model;
 using ChessGame.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -16,13 +18,64 @@ namespace ChessGame.ViewModel
     private ObservableCollection<ObservableCollection<Square>> chessBoard;
     private Square selectedSquare;
     private Square selectedPiece;
-    List<Square> currentMoves;
-    SolidColorBrush White = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0d9b5")); // white
-    SolidColorBrush Black = (SolidColorBrush)(new BrushConverter().ConvertFrom("#b58863")); // black
+    List<Square> markedAsAvailableSquares = new List<Square>();
+    SolidColorBrush WhiteBackground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0d9b5")); // white
+    SolidColorBrush BlackBackground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#b58863")); // black
     SolidColorBrush FocusedItemBackground = Brushes.Olive;
     SolidColorBrush CapturePieceBackground = (SolidColorBrush)(new BrushConverter().ConvertFrom("#cdd26a"));
-    private string availableSquare = @"pack://application:,,,/ChessGame;component/Resources/available_square.png";
-    private string availablePiece = @"pack://application:,,,/ChessGame;component/Resources/available_piece.png";
+    private string availableSquareIcon = @"pack://application:,,,/ChessGame;component/Resources/available_square.png";
+    //private string availablePieceIcon = @"pack://application:,,,/ChessGame;component/Resources/available_piece.png";
+    private ObservableCollection<string> listOfMvements = new ObservableCollection<string>();
+    public Dictionary<string, string> Movements = new Dictionary<string, string>();
+
+    ObservableCollection<ObservableCollection<ObservableCollection<Square>>> listOfChessBoards = new ObservableCollection<ObservableCollection<ObservableCollection<Square>>>();
+
+
+
+    public ObservableCollection<string> ListOfMovements
+    {
+      get { return listOfMvements; }
+      set
+      {
+        if (listOfMvements == value) return;
+        listOfMvements = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListOfMovements"));
+      }
+    }
+
+    public String SelectedMovement
+    {
+      get { return selectedMovement; }
+      set
+      {
+        if (selectedMovement == value) return;
+        selectedMovement = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMovement"));
+      }
+    }
+
+
+    public int SelectedMovementIndex
+    {
+      get { return selectedMovementIndex; }
+      set
+      {
+        if (selectedMovementIndex == value) return;
+        selectedMovementIndex = value;
+        //  ChessBoard = new ObservableCollection<ObservableCollection<Square>>();
+        //ChessBoard = listOfChessBoards[value];
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMovementIndex"));
+      }
+    }
+
+
+
+    ChessPieceLocation mapper = new ChessPieceLocation();
+
+    public Boolean IsWhiteTurn = true;
+    public Boolean isFirstPlayerWhite = true;
+
+    private string message;
 
     public ObservableCollection<ObservableCollection<Square>> ChessBoard
     {
@@ -35,6 +88,27 @@ namespace ChessGame.ViewModel
       }
     }
 
+    //public Square SelectedSquare
+    //{
+    //  get { return selectedSquare; }
+    //  set
+    //  {
+    //    if (selectedSquare == value) return;
+    //    selectedSquare = value;
+    //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedSquare"));
+    //  }
+    //}
+
+    public String Message
+    {
+      get { return message; }
+      set
+      {
+        if (message == value) return;
+        message = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Message"));
+      }
+    }
     public Square SelectedSquare
     {
       get { return selectedSquare; }
@@ -45,298 +119,272 @@ namespace ChessGame.ViewModel
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedSquare"));
       }
     }
-    public Square SelectedPiece
-    {
-      get { return selectedPiece; }
-      set
-      {
-        if (selectedPiece == value) return;
-        selectedPiece = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedPiece"));
-      }
-    }
     public MainViewModel()
     {
 
     }
 
+    List<ChessBoardModel> ChessBoardConfigurations = new List<ChessBoardModel>();
+
     public void InitializeChessBoard()
     {
-      ChessBoard = new ObservableCollection<ObservableCollection<Square>>();
+      ChessBoard = GetEmptyChessBoard();
+      PlaceChessPieces();
+    }
 
-      char letter = 'A';
-      string id;
+
+    ObservableCollection<ObservableCollection<Square>> GetEmptyChessBoard()
+    {
+      var ClearChessBoard = new ObservableCollection<ObservableCollection<Square>>();
+
+
       for (int i = 0; i < 8; i++)
       {
-        char number = '8';
-        ObservableCollection<Square> squareList = new ObservableCollection<Square>();
+        var lineOfSquares = new ObservableCollection<Square>();
         for (int j = 0; j < 8; j++)
         {
-          id = letter.ToString() + number.ToString();
-          number--;
-          var square = new Square();
-          square.Id = id;
+          Square square = new Square();
+          var coordinates = new Pair(i, j);
+          square.Id = mapper.CoordinatesToString[coordinates];
           square.ChessPieceName = Resources.NoPiece;
-          if ((i + j) % 2 == 0)
+          lineOfSquares.Add(square);
+          if ((coordinates.i + coordinates.j) % 2 == 0)
           {
-            square.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#f0d9b5")); // white
+            square.Background = WhiteBackground;
           }
           else
           {
-            square.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom("#b58863")); // black
+            square.Background = BlackBackground; // black
           }
-          squareList.Add(square);
         }
-        letter++;
-        ChessBoard.Add(squareList);
+        ClearChessBoard.Add(lineOfSquares);
       }
 
+      listOfChessBoards.Add(ClearChessBoard);
+      return ClearChessBoard;
+    }
 
+
+    List<ChessPiece> pieces = new List<ChessPiece>();
+    private string selectedMovement;
+    private int selectedMovementIndex;
+
+    private void PlaceChessPieces()
+    {
+      pieces = new List<ChessPiece>();
+      // add pawns
       for (int i = 0; i < 8; i++)
       {
-        ChessBoard[i][1].ChessPieceName = Resources.BlackPawn;
-        ChessBoard[i][1].IsWhite = false;
-        ChessBoard[i][1].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_pawn.png";
-
-        ChessBoard[i][6].ChessPieceName = Resources.WhitePawn;
-        ChessBoard[i][6].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_pawn.png";
+        pieces.Add(new Pawn(isFirstPlayerWhite, ((char)('A' + i)).ToString() + "2"));
+        pieces.Add(new Pawn(!isFirstPlayerWhite, ((char)('A' + i)).ToString() + "7"));
       }
 
-      ChessBoard[0][0].ChessPieceName = ChessBoard[7][0].ChessPieceName = Resources.BlackRook;
-      ChessBoard[0][0].IsWhite = ChessBoard[7][0].IsWhite = false;
-      ChessBoard[0][0].ChessPiece = ChessBoard[7][0].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_rook.png";
-      ChessBoard[0][7].ChessPieceName = ChessBoard[7][7].ChessPieceName = Resources.WhiteRook;
-      ChessBoard[0][7].ChessPiece = ChessBoard[7][7].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_rook.png";
+      //add rooks
+      pieces.Add(new Rook(isFirstPlayerWhite, "A1"));
+      pieces.Add(new Rook(isFirstPlayerWhite, "H1"));
+      pieces.Add(new Rook(!isFirstPlayerWhite, "A8"));
+      pieces.Add(new Rook(!isFirstPlayerWhite, "H8"));
 
-      ChessBoard[1][0].ChessPieceName = ChessBoard[6][0].ChessPieceName = Resources.BlackHorse;
-      ChessBoard[1][0].IsWhite = ChessBoard[6][0].IsWhite = false;
-      ChessBoard[1][0].ChessPiece = ChessBoard[6][0].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_horse.png";
-      ChessBoard[1][7].ChessPieceName = ChessBoard[6][7].ChessPieceName = Resources.WhiteHorse;
-      ChessBoard[1][7].ChessPiece = ChessBoard[6][7].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_horse.png";
+      //add knights
+      pieces.Add(new Knight(isFirstPlayerWhite, "B1"));
+      pieces.Add(new Knight(isFirstPlayerWhite, "G1"));
+      pieces.Add(new Knight(!isFirstPlayerWhite, "B8"));
+      pieces.Add(new Knight(!isFirstPlayerWhite, "G8"));
 
-      ChessBoard[2][0].ChessPieceName = ChessBoard[5][0].ChessPieceName = Resources.BlackBishop;
-      ChessBoard[2][0].IsWhite = ChessBoard[5][0].IsWhite = false;
-      ChessBoard[2][0].ChessPiece = ChessBoard[5][0].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_bishop.png";
-      ChessBoard[2][7].ChessPieceName = ChessBoard[5][7].ChessPieceName = Resources.WhiteBishop;
-      ChessBoard[2][7].ChessPiece = ChessBoard[5][7].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_bishop.png";
+      //add bishops
+      pieces.Add(new Bishop(isFirstPlayerWhite, "C1"));
+      pieces.Add(new Bishop(isFirstPlayerWhite, "F1"));
+      pieces.Add(new Bishop(!isFirstPlayerWhite, "C8"));
+      pieces.Add(new Bishop(!isFirstPlayerWhite, "F8"));
 
 
-      ChessBoard[3][0].ChessPieceName = Resources.BlackQueen;
-      ChessBoard[3][0].IsWhite = false;
-      ChessBoard[3][0].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_queen.png";
-      ChessBoard[3][7].ChessPieceName = Resources.WhiteQueen;
-      ChessBoard[3][7].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_queen.png";
+      //add queens
+      pieces.Add(new Queen(isFirstPlayerWhite, isFirstPlayerWhite ? "D1" : "E1"));
+      pieces.Add(new Queen(!isFirstPlayerWhite, isFirstPlayerWhite ? "D8" : "E8"));
 
-      ChessBoard[4][0].ChessPieceName = Resources.BlackKing;
-      ChessBoard[4][0].IsWhite = false;
-      ChessBoard[4][0].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/black_king.png";
-      ChessBoard[4][7].ChessPieceName = Resources.WhiteKing;
-      ChessBoard[4][7].ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_king.png";
+      //add kings
+      pieces.Add(new King(isFirstPlayerWhite, isFirstPlayerWhite ? "E1" : "D1"));
+      pieces.Add(new King(!isFirstPlayerWhite, isFirstPlayerWhite ? "E8" : "D8"));
 
-      SelectedSquare = ChessBoard.FirstOrDefault().FirstOrDefault();
+      // place pieces on chessboard
+      foreach (var piece in pieces)
+      {
+        chessBoard[piece.Coordinates.i][piece.Coordinates.j].ChessPieceName = piece.ChessPieceName;
+        chessBoard[piece.Coordinates.i][piece.Coordinates.j].Piece = piece;
+        //chessBoard[piece.Coordinates.i][piece.Coordinates.j].ChessPieceName = piece.ChessPieceName;
+        //chessBoard[piece.Coordinates.i][piece.Coordinates.j].Piece.IsWhite = piece.IsWhite;
+        //chessBoard[piece.Coordinates.i][piece.Coordinates.j].Piece.Location = piece.Location;
+        //chessBoard[piece.Coordinates.i][piece.Coordinates.j].Piece.ChessPieceIcon = piece.ChessPieceIcon;
+      }
 
+      //SelectedSquare = ChessBoard.FirstOrDefault().FirstOrDefault();
     }
+
 
     public void DisplayAvailableSquares(String squareId)
     {
+      var previousSelectedPiece = SelectedSquare;
+      SelectedSquare = GetSelectedPiece(squareId);
 
-      // clear background of the selected item
-      if (SelectedPiece != null)
-      {
-        int sum = SelectedPiece.Id[0] + SelectedPiece.Id[1];
-        if (sum % 2 != 0)
-        {
-          SelectedPiece.Background = White;
-        }
-        else
-        {
-          SelectedPiece.Background = Black;
-        }
-
-        if (SelectedPiece.Id == squareId && SelectedPiece.Background == FocusedItemBackground)
-        {
-          return;
-        }
-      }
-
-      var previousSelectedPiece = SelectedPiece;
-      SelectedPiece = GetSelectedPiece(squareId);
-
-      bool isPieceMoved = false;
-      if (SelectedPiece.ChessPiece == availableSquare || selectedPiece.Background == CapturePieceBackground)
-      {
-        isPieceMoved = true;
-      }
-
-      if (previousSelectedPiece != null)
-      {
-        // clear background of the selected item
-        int sum = previousSelectedPiece.Id[0] + previousSelectedPiece.Id[1];
-        if (sum % 2 != 0)
-        {
-          previousSelectedPiece.Background = White;
-        }
-        else
-        {
-          previousSelectedPiece.Background = Black;
-        }
-
-
-        // clear previous moves
-        if (currentMoves != null)
-        {
-          foreach (var move in currentMoves)
-          {
-            if (move.ChessPieceName == Resources.NoPiece)
-              move.ChessPiece = null;
-            sum = move.Id[0] + move.Id[1];
-            if (sum % 2 != 0)
-            {
-              move.Background = White;
-            }
-            else
-            {
-              move.Background = Black;
-            }
-          }
-        }
-      }
-
-
-      if (isPieceMoved)
-      {
-        SelectedPiece.ChessPiece = previousSelectedPiece.ChessPiece;
-        SelectedPiece.ChessPieceName = previousSelectedPiece.ChessPieceName;
-        selectedPiece.IsWhite = previousSelectedPiece.IsWhite;
-        previousSelectedPiece.ChessPieceName = Resources.NoPiece;
-        previousSelectedPiece.ChessPiece = null;
-
-        if (SelectedPiece.ChessPieceName == Resources.WhitePawn && SelectedPiece.Id[1] == '8')
-        {
-          SelectedPiece.ChessPieceName = Resources.WhiteQueen;
-          selectedPiece.ChessPiece = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/white_queen.png";
-
-        }
-        isPieceMoved = true;
-      }
-
-
-
-      if (isPieceMoved)
+      if (SelectedSquare == null)
       {
         return;
       }
-
-      if (SelectedPiece.ChessPieceName != Resources.NoPiece)
+      if (previousSelectedPiece != null && previousSelectedPiece.Background != null)
       {
-        SelectedPiece.Background = FocusedItemBackground;
+        var c = mapper.StringToCoordinates[previousSelectedPiece.Id];
+        chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
       }
 
 
-      if (SelectedPiece.ChessPieceName == Resources.WhitePawn || SelectedPiece.ChessPieceName == Resources.BlackPawn)
+      if (previousSelectedPiece != null && SelectedSquare != null)
       {
-        currentMoves = MarkAvailablePawnMoves(squareId);
-        foreach (var move in currentMoves)
+        if (previousSelectedPiece.Piece.GetType().ToString().Contains("King") && SelectedSquare.Piece.GetType().ToString().Contains("Rook") && SelectedSquare.Piece.IsWhite == previousSelectedPiece.Piece.IsWhite)
         {
-          if (move.ChessPieceName == Resources.NoPiece)
+          if (!Movements.ContainsValue(previousSelectedPiece.Id) && !Movements.ContainsValue(previousSelectedPiece.Id))
           {
-            move.ChessPiece = availableSquare;
-          }
-          else
-          {
-            move.Background = CapturePieceBackground;
-          }
-        }
-      }
+            int offset = 1;
+            if (SelectedSquare.Piece.Location[0] > previousSelectedPiece.Id[0])
+            {
+              offset = -1;
+            }
+            bool canMakeRocada = true;
+            for (int i = SelectedSquare.Piece.Location[0] + offset; i != previousSelectedPiece.Id[0]; i += offset)
+            {
+              string s = ((char)i).ToString() + previousSelectedPiece.Id[1].ToString();
+              if (pieces.Any(p => p.Location == s))
+              {
+                canMakeRocada = false;
+              }
+            }
+            if (canMakeRocada)
+            {
+              ClearAvailableSquares();
 
-      if (SelectedPiece.ChessPieceName == Resources.WhiteHorse || SelectedPiece.ChessPieceName == Resources.BlackHorse)
-      {
-        currentMoves = MarkAvailableHorseMoves(squareId);
-        foreach (var move in currentMoves)
-        {
-          if (move.ChessPieceName == Resources.NoPiece)
-          {
-            move.ChessPiece = availableSquare;
-          }
-          else
-          {
-            move.Background = CapturePieceBackground;
-          }
-        }
-      }
-
-      if (SelectedPiece.ChessPieceName == Resources.WhiteRook || SelectedPiece.ChessPieceName == Resources.BlackRook)
-      {
-        currentMoves = MarkAvailableRookMoves(squareId);
-        foreach (var move in currentMoves)
-        {
-          if (move.ChessPieceName == Resources.NoPiece)
-          {
-            move.ChessPiece = availableSquare;
-          }
-          else
-          {
-            move.Background = CapturePieceBackground;
-          }
-        }
-      }
+              var c = mapper.StringToCoordinates[SelectedSquare.Piece.Location];
+              var rookTemp = chessBoard[c.i][c.j].Piece;
+              var rookIdTemp = rookTemp.Location;
+              chessBoard[c.i][c.j].Piece = new ChessPiece();
+              string rook = ((char)(previousSelectedPiece.Piece.Location[0] - offset)).ToString() + previousSelectedPiece.Piece.Location[1].ToString();
 
 
-      if (SelectedPiece.ChessPieceName == Resources.WhiteBishop || SelectedPiece.ChessPieceName == Resources.BlackBishop)
-      {
-        currentMoves = MarkAvailableBishopMoves(squareId);
-        foreach (var move in currentMoves)
-        {
-          if (move.ChessPieceName == Resources.NoPiece)
-          {
-            move.ChessPiece = availableSquare;
-          }
-          else
-          {
-            move.Background = CapturePieceBackground;
+              rookTemp.Location = rook;
+              var piece = pieces.FirstOrDefault(p => p.Location == null && p.IsWhite == rookTemp.IsWhite);
+              piece = rookTemp;
+              c = mapper.StringToCoordinates[rook];
+              chessBoard[c.i][c.j].Piece = rookTemp;
+
+
+              c = mapper.StringToCoordinates[previousSelectedPiece.Piece.Location];
+              var kingTemp = chessBoard[c.i][c.j].Piece;
+              var kingIdTemp = kingTemp.Location;
+              chessBoard[c.i][c.j].Piece = new ChessPiece();
+
+              string king = ((char)(kingIdTemp[0] - 2 * offset)).ToString() + kingIdTemp[1].ToString();
+
+
+              kingTemp.Location = king;
+              piece = pieces.FirstOrDefault(p => p.GetType().ToString().Contains("King") && p.IsWhite == kingTemp.IsWhite);
+              piece = kingTemp;
+              c = mapper.StringToCoordinates[king];
+              chessBoard[c.i][c.j].Piece = kingTemp;
+
+              IsWhiteTurn = !IsWhiteTurn;
+              return;
+
+            }
           }
         }
       }
 
 
-      if (SelectedPiece.ChessPieceName == Resources.WhiteQueen || SelectedPiece.ChessPieceName == Resources.BlackQueen)
+      // if is moved
+      if (markedAsAvailableSquares.Contains(SelectedSquare))
       {
-        currentMoves = MarkAvailableBishopMoves(squareId);
-        var currentMoves2 = MarkAvailableRookMoves(squareId);
-        currentMoves.AddRange(currentMoves2);
-        foreach (var move in currentMoves)
-        {
-          if (move.ChessPieceName == Resources.NoPiece)
-          {
-            move.ChessPiece = availableSquare;
-          }
-          else
-          {
-            move.Background = CapturePieceBackground;
-          }
-        }
+        MovePiece(previousSelectedPiece);
+        return;
       }
 
-      if (SelectedPiece.ChessPieceName == Resources.WhiteKing || SelectedPiece.ChessPieceName == Resources.BlackKing)
+      //clear
+      ClearAvailableSquares();
+
+      // if the same piece is selected
+      if (previousSelectedPiece == SelectedSquare)
       {
-        currentMoves = MarkAvailableKingMoves(squareId);
-        foreach (var move in currentMoves)
+        SelectedSquare = new Square();
+        return;
+      }
+
+      var selected = pieces.FirstOrDefault(p => p.Location == SelectedSquare.Id);
+      if (selected != null && SelectedSquare.Piece.IsWhite == IsWhiteTurn)
+      {
+
+        markedAsAvailableSquares = selected.GetAvailableMoves(SelectedSquare, pieces, chessBoard, Movements);
+        if (markedAsAvailableSquares.Any())
         {
-          if (move.ChessPieceName == Resources.NoPiece)
+          SelectedSquare.Background = FocusedItemBackground;
+        }
+        // mark available squares
+        foreach (var currentSquare in markedAsAvailableSquares)
+        {
+          if (currentSquare.Piece.ChessPieceName == null)
           {
-            move.ChessPiece = availableSquare;
+            var c = mapper.StringToCoordinates[currentSquare.Id];
+            chessBoard[c.i][c.j].Piece.ChessPieceIcon = availableSquareIcon;
           }
           else
           {
-            move.Background = CapturePieceBackground;
+            var c = mapper.StringToCoordinates[currentSquare.Id];
+            chessBoard[c.i][c.j].Background = CapturePieceBackground;
           }
         }
+        return;
       }
+
+
+
 
     }
 
+    private void MovePiece(Square previousSelectedPiece)
+    {
+      ClearAvailableSquares();
 
+      //Movements[previousSelectedPiece.Id] = SelectedSquare.Id;
+      if (SelectedSquare.Piece.ChessPieceName != null)
+      {
+        pieces.RemoveAll(p => p.Location == SelectedSquare.Id);
+      }
+      SelectedSquare.Piece = previousSelectedPiece.Piece;
 
+      var piece = pieces.FirstOrDefault(p => p.Location == previousSelectedPiece.Id);
+      piece.Location = SelectedSquare.Id;
+
+      previousSelectedPiece.Piece = new ChessPiece();
+      var c = mapper.StringToCoordinates[SelectedSquare.Id];
+      chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
+
+      IsWhiteTurn = !IsWhiteTurn;
+    }
+
+    void ClearAvailableSquares()
+    {
+
+      foreach (var currentSquare in markedAsAvailableSquares)
+      {
+        if (currentSquare.Piece.ChessPieceName == null)
+        {
+          var c = mapper.StringToCoordinates[currentSquare.Id];
+          chessBoard[c.i][c.j].Piece = new ChessPiece();
+        }
+        else
+        {
+          var c = mapper.StringToCoordinates[currentSquare.Id];
+          chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
+        }
+      }
+      markedAsAvailableSquares.Clear();
+    }
 
     private Square GetSelectedPiece(string squareId)
     {
@@ -352,408 +400,8 @@ namespace ChessGame.ViewModel
       return square;
     }
 
-    private List<Square> MarkAvailablePawnMoves(string squareId)
-    {
-      List<Square> pawnMoves = new List<Square>();
 
-      List<string> directions = new List<string>();
 
-      char letter = squareId[0];
-      char digit = squareId[1];
-
-      int x = letter - 'A';
-      int y = 7 - (digit - '1');
-
-      int offset = 1;
-      if (SelectedPiece.IsWhite)
-        offset = -1;
-
-
-      int xOffset = x;
-      int yOffset = y + offset;
-      if (yOffset >= 0 && yOffset < 8 && chessBoard[xOffset][yOffset].ChessPieceName == Resources.NoPiece)
-      {
-        chessBoard[xOffset][yOffset].ChessPiece = availableSquare;
-        pawnMoves.Add(chessBoard[xOffset][yOffset]);
-      }
-
-      if ((selectedPiece.IsWhite && digit == '2' || !selectedPiece.IsWhite && digit == '7') && chessBoard[xOffset][yOffset].ChessPieceName == Resources.NoPiece)
-      {
-        yOffset = y + 2 * offset;
-
-        if (yOffset >= 0 && yOffset < 8 && chessBoard[xOffset][yOffset].ChessPieceName == Resources.NoPiece)
-        {
-          chessBoard[xOffset][yOffset].ChessPiece = availableSquare;
-          pawnMoves.Add(chessBoard[xOffset][yOffset]);
-        }
-      }
-
-      xOffset = x - 1;
-      yOffset = y + offset;
-
-      if (xOffset >= 0 && xOffset < 8 && yOffset >= 0 && yOffset < 8 && chessBoard[xOffset][yOffset].ChessPieceName != Resources.NoPiece && chessBoard[xOffset][yOffset].IsWhite != SelectedPiece.IsWhite)
-      {
-        pawnMoves.Add(chessBoard[xOffset][yOffset]);
-      }
-
-
-      xOffset = x + 1;
-      yOffset = y + offset;
-
-      if (xOffset >= 0 && xOffset < 8 && yOffset >= 0 && yOffset < 8 && chessBoard[xOffset][yOffset].ChessPieceName != Resources.NoPiece && chessBoard[xOffset][yOffset].IsWhite != SelectedPiece.IsWhite)
-      {
-        pawnMoves.Add(chessBoard[xOffset][yOffset]);
-      }
-
-      return pawnMoves;
-    }
-
-    private List<Square> MarkAvailableHorseMoves(string squareId)
-    {
-      List<Square> horseMoves = new List<Square>();
-
-      List<int> lin = new List<int>() { 2, -2, 2, -2, 1, -1, 1, -1 };
-      List<int> col = new List<int>() { 1, 1, -1, -1, 2, 2, -2, -2 };
-
-      List<string> directions = new List<string>();
-
-      for (int i = 0; i < 8; i++)
-      {
-
-        char letter = squareId[0];
-        letter += (char)lin[i];
-        char digit = squareId[1];
-        digit += (char)col[i];
-        directions.Add(letter.ToString() + digit.ToString());
-
-      }
-
-      foreach (var line in ChessBoard)
-      {
-        foreach (var square in line)
-        {
-          if (directions.Contains(square.Id))
-          {
-            if (square.ChessPieceName == Resources.NoPiece || square.IsWhite != SelectedPiece.IsWhite)
-            {
-              if (square.ChessPieceName == Resources.NoPiece)
-                square.ChessPiece = availableSquare;
-              horseMoves.Add(square);
-            }
-          }
-        }
-
-      }
-      return horseMoves;
-    }
-
-    private List<Square> MarkAvailableRookMoves(string squareId)
-    {
-      List<Square> rookMoves = new List<Square>();
-
-      List<string> locations = new List<string>();
-
-      char letter = squareId[0];
-      char digit = squareId[1]; // 
-      int i = letter - 'A'; // A [0]   B[1] etc..    [0][0] A7  [0][1] A6
-                            // int j = '8'- digit;
-
-      int j = digit - '1';
-      //down
-      for (j = 8 - (digit - '1'); j < 8; j++)
-      {
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-      //up
-      for (j = 8 - (digit - '1') - 2; j >= 0; j--)
-      {
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-
-      j = 8 - (digit - '1') - 1;
-      //left
-      for (i = (letter - 'A') - 1; i >= 0; i--)
-      {
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-      //right
-      for (i = (letter - 'A') + 1; i < 8; i++)
-      {
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-
-      foreach (var line in ChessBoard)
-      {
-        foreach (var square in line)
-        {
-          if (locations.Contains(square.Id))
-          {
-            if (square.ChessPieceName == Resources.NoPiece || square.IsWhite != SelectedPiece.IsWhite)
-            {
-              if (square.ChessPieceName == Resources.NoPiece)
-                square.ChessPiece = availableSquare;
-              rookMoves.Add(square);
-            }
-          }
-        }
-
-      }
-      return rookMoves;
-    }
-
-
-
-    private List<Square> MarkAvailableBishopMoves(string squareId)
-    {
-      List<Square> bishopMoves = new List<Square>();
-
-      List<string> locations = new List<string>();
-
-      char letter = squareId[0];
-      char digit = squareId[1]; // 
-      int I = letter - 'A'; // A [0]   B[1] etc..    [0][0] A7  [0][1] A6
-                            // int j = '8'- digit;
-
-      int J = 8 - (digit - '1') - 1;
-      //right down
-      for (int k = 1; I + k < 8 && J + k < 8; k++)
-      {
-        int i = I + k;
-        int j = J + k;
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-      //left down
-      for (int k = 1; I - k >= 0 && J + k < 8; k++)
-      {
-        int i = I - k;
-        int j = J + k;
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-
-      //right up
-      for (int k = 1; I + k < 8 && J - k > 0; k++)
-      {
-        int i = I + k;
-        int j = J - k;
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-
-      //left up
-      for (int k = 1; I - k >= 0 && J - k > 0; k++)
-      {
-        int i = I - k;
-        int j = J - k;
-        var h = chessBoard[i][j].Id;
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-        {
-          break;
-        }
-        string location = chessBoard[i][j].Id;
-        locations.Add(location);
-        if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-        {
-          break;
-        }
-
-      }
-
-
-
-      ////up
-      //for (j = 8 - (digit - '1') - 2; j >= 0; j--)
-      //{
-      //  var h = chessBoard[i][j].Id;
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-      //  string location = chessBoard[i][j].Id;
-      //  locations.Add(location);
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-
-      //}
-
-
-      //j = 8 - (digit - '1') - 1;
-      ////left
-      //for (i = (letter - 'A') - 1; i >= 0; i--)
-      //{
-      //  var h = chessBoard[i][j].Id;
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-      //  string location = chessBoard[i][j].Id;
-      //  locations.Add(location);
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-
-      //}
-
-      ////right
-      //for (i = (letter - 'A') + 1; i < 8; i++)
-      //{
-      //  var h = chessBoard[i][j].Id;
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite == SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-      //  string location = chessBoard[i][j].Id;
-      //  locations.Add(location);
-      //  if (chessBoard[i][j].ChessPieceName != Resources.NoPiece && chessBoard[i][j].IsWhite != SelectedPiece.IsWhite)
-      //  {
-      //    break;
-      //  }
-
-      //}
-
-
-      foreach (var line in ChessBoard)
-      {
-        foreach (var square in line)
-        {
-          if (locations.Contains(square.Id))
-          {
-            if (square.ChessPieceName == Resources.NoPiece || square.IsWhite != SelectedPiece.IsWhite)
-            {
-              if (square.ChessPieceName == Resources.NoPiece)
-                square.ChessPiece = availableSquare;
-              bishopMoves.Add(square);
-            }
-          }
-        }
-
-      }
-      return bishopMoves;
-    }
-
-
-    private List<Square> MarkAvailableKingMoves(string squareId)
-    {
-      List<Square> horseMoves = new List<Square>();
-
-      List<int> lin = new List<int>() { 0, 0, 1, 1, 1, -1, -1, -1 };
-      List<int> col = new List<int>() { 1, -1, 0, 1, -1, 0, 1, -1 };
-
-      List<string> directions = new List<string>();
-
-      for (int i = 0; i < 8; i++)
-      {
-
-        char letter = squareId[0];
-        letter += (char)lin[i];
-        char digit = squareId[1];
-        digit += (char)col[i];
-        directions.Add(letter.ToString() + digit.ToString());
-      }
-
-      foreach (var line in ChessBoard)
-      {
-        foreach (var square in line)
-        {
-          if (directions.Contains(square.Id))
-          {
-            if (square.ChessPieceName == Resources.NoPiece || square.IsWhite != SelectedPiece.IsWhite)
-            {
-              if (square.ChessPieceName == Resources.NoPiece)
-                square.ChessPiece = availableSquare;
-              horseMoves.Add(square);
-            }
-          }
-        }
-
-      }
-      return horseMoves;
-    }
 
     public event PropertyChangedEventHandler PropertyChanged;
   }
