@@ -38,20 +38,11 @@ namespace ChessGame
 
     private void getSelectedItem(object sender, MouseButtonEventArgs e)
     {
-      //var book = (Square)Chessboard.SelectedItems.;
-      //System.Windows.MessageBox.Show(book.Id);
     }
-    //public override bool Equals(object obj)
-    //{
-    //  if (this.name_to_show_menu == (obj as patient).name_to_show_menu)
-    //    return true;
-    //  else
-    //    return false;
-    //}
+
     private void ListViewItem_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
       var listViewItem = sender as ListViewItem;
-      //ListView listView = sender as ListView;
       List<Square> l = new List<Square>();
       foreach (ObservableCollection<Square> sq in viewModel.ChessBoard)
       {
@@ -61,45 +52,10 @@ namespace ChessGame
         }
       }
 
-      //if (listViewItem != null && listViewItem.IsSelected)
-      //{
-      //  var sq = Chessboard.SelectedItem;
-      //  //var selected = e.AddedItems[0] as StackPanel;
-      //  int breakpoint = 0;
-
-      //  //Do your stuff
-      //}
-
       viewModel.DisplayAvailableSquares(listViewItem.Content.ToString());
 
-      //Thread beepThread = new Thread(new ThreadStart(PlayBeep));
-      //beepThread.IsBackground = true;
-      //beepThread.Start();
-
-
-      //  var square2 = l.Where(c => c.Id == listViewItem.Tag.ToString()).FirstOrDefault();
-
-      //var emoticon = EmoticonCollection.Instance.Emoticons.Where(em => em.Icon == listViewItem.Content.ToString()).FirstOrDefault();
-      //if (emoticon != null)
-      //{
-      //  TextEmoticon = emoticon.Text;
-      //  EmoticonsViewModel viewModel = DataContext as EmoticonsViewModel;
-      //  viewModel.TextEmoticon = emoticon.Text;
-      //  viewModel.CloseAction();
-      //}
-      // Starts beep on background thread
-      //if (viewModel.IsWhiteTurn)
-      //{
-
-        SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
-        simpleSound.Play();
-      //}
-      //else
-      //{
-      //  //SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click2.wav");
-      //  //simpleSound.Play();
-      //}
-
+      SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
+      simpleSound.Play();
     }
 
   }
