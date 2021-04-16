@@ -423,7 +423,7 @@ namespace ChessGame.ViewModel
 
     }
 
-    private bool MovePiece1(Square currentSquare, Square previousSquare, ObservableCollection<ObservableCollection<Square>> ChessBoard, List<ChessPiece> pieces, List<Square> markedAsAvailableSquares)
+    private bool MovePiece2(Square currentSquare, Square previousSquare, ObservableCollection<ObservableCollection<Square>> ChessBoard, List<ChessPiece> pieces, List<Square> markedAsAvailableSquares)
     {
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
 
@@ -456,7 +456,7 @@ namespace ChessGame.ViewModel
         }
       }
 
-      if (IsInChessState1(ChessBoard, pieces))
+      if (IsInChessState2(ChessBoard, pieces, piece))
       {
         return false;
       }
@@ -490,7 +490,7 @@ namespace ChessGame.ViewModel
       return false;
     }
 
-    private bool MovePiece2(Square currentSquare, Square previousSquare,
+    private bool MovePiece1(Square currentSquare, Square previousSquare,
       ObservableCollection<ObservableCollection<Square>> ChessBoard, List<ChessPiece> pieces,
       List<Square> markedAsAvailableSquares)
     {
