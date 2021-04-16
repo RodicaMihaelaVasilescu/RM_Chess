@@ -1,22 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace ChessGame.Model
 {
   class Square : INotifyPropertyChanged
   {
-    private SolidColorBrush background;
 
+    private ChessPiece piece = new ChessPiece();
+    private SolidColorBrush background;
     public string Id { get; set; }
     public string ChessPieceName { get; set; }
+    public double SquareSize { get; set; } = 60;
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    private string chessPieceIcon;
+
+    public Square() { }
+    public Square(Square square)
+    {
+      this.background = square.Background;
+      this.Piece = new ChessPiece(square.Piece);
+      this.Id = square.Id;
+      this.ChessPieceIcon = square.ChessPieceIcon;
+      this.ChessPieceName = square.ChessPieceName;
+    }
 
     public override string ToString()
     {
@@ -34,8 +41,6 @@ namespace ChessGame.Model
       }
     }
 
-    private ChessPiece piece = new ChessPiece();
-
     public ChessPiece Piece
     {
       get { return piece; }
@@ -47,20 +52,18 @@ namespace ChessGame.Model
       }
     }
 
- 
-    public double SquareSize { get; set; } = 60;
-
-    private String chessPiece;
-    public String ChessPieceIcon
+    public string ChessPieceIcon
     {
-      get { return chessPiece; }
+      get { return chessPieceIcon; }
       set
       {
-        if (chessPiece == value) return;
-        chessPiece = value;
+        if (chessPieceIcon == value) return;
+        chessPieceIcon = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ChessPieceIcon"));
       }
     }
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
   }
 }

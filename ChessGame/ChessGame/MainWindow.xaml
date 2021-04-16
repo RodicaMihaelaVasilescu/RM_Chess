@@ -55,6 +55,13 @@
   </Canvas>-->
 
     <Grid>
+      <Button
+        Width="100"
+        Height="30"
+        HorizontalAlignment="Left"
+        VerticalAlignment="Top"
+        Command="{Binding ResetCommand}"
+        Content="Reset" />
       <Label
         HorizontalAlignment="Center"
         Content="{Binding Message}"
@@ -116,17 +123,17 @@
         </ListView>
 
         <ListBox
-          Margin="10 0"
           Width="300"
+          Margin="10,0"
           Background="DarkGray"
-          Foreground="White"
           FontFamily="Calisto"
-          FontWeight="DemiBold"
-          FontStyle="Italic"
           FontSize="15"
+          FontStyle="Italic"
+          FontWeight="DemiBold"
+          Foreground="White"
           ItemsSource="{Binding Path=ListOfMovements}"
-          SelectedItem="{Binding Path=SelectedMovement}"
           SelectedIndex="{Binding Path=SelectedMovementIndex}"
+          SelectedItem="{Binding Path=SelectedMovement}"
           SelectedValuePath="Value" />
       </StackPanel>
     </Grid>

@@ -61,7 +61,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to bishop.
+        ///   Looks up a localized string similar to Bishop.
         /// </summary>
         internal static string Bishop {
             get {
@@ -124,7 +124,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to king.
+        ///   Looks up a localized string similar to King.
         /// </summary>
         internal static string King {
             get {
@@ -133,7 +133,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to knight.
+        ///   Looks up a localized string similar to Knight.
         /// </summary>
         internal static string Knight {
             get {
@@ -151,7 +151,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to pawn.
+        ///   Looks up a localized string similar to Pawn.
         /// </summary>
         internal static string Pawn {
             get {
@@ -160,7 +160,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to queen.
+        ///   Looks up a localized string similar to Queen.
         /// </summary>
         internal static string Queen {
             get {
@@ -169,7 +169,7 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to rook.
+        ///   Looks up a localized string similar to Rook.
         /// </summary>
         internal static string Rook {
             get {

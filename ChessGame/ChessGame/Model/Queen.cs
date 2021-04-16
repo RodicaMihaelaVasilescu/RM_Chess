@@ -1,16 +1,12 @@
 ﻿using ChessGame.Mapper;
 using ChessGame.Properties;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Model
 {
-  class Queen : ChessPiece, INotifyPropertyChanged
+  class Queen : ChessPiece
   {
     public Queen(bool isWhite, string location)
     {
@@ -29,26 +25,24 @@ namespace ChessGame.Model
         ChessPieceName = Resources.BlackQueen;
 
       }
+      ChessPieceType = Resources.Queen;
 
     }
-    public override List<Square> GetAvailableMoves(Square SelectedSquare, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
+    public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {
       List<Square> queenpMoves = new List<Square>();
 
-      queenpMoves.AddRange(DiagonalAndLinearMove(1, 1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(1, -1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(-1, -1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(-1, 1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(0, 1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(0, -1, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(-1, 0, SelectedSquare, pieces, chessBoard));
-      queenpMoves.AddRange(DiagonalAndLinearMove(1, 0, SelectedSquare, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(1, 1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(1, -1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(-1, -1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(-1, 1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(0, 1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(0, -1, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(-1, 0, piece, pieces, chessBoard));
+      queenpMoves.AddRange(DiagonalAndLinearMove(1, 0, piece, pieces, chessBoard));
 
       return queenpMoves;
     }
 
-
-
-    public event PropertyChangedEventHandler PropertyChanged;
   }
 }

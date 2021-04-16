@@ -1,16 +1,12 @@
 ﻿using ChessGame.Mapper;
 using ChessGame.Properties;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Model
 {
-  class Knight : ChessPiece, INotifyPropertyChanged
+  class Knight : ChessPiece
   {
     public Knight(bool isWhite, string location)
     {
@@ -29,8 +25,9 @@ namespace ChessGame.Model
         ChessPieceName = Resources.BlackHorse;
 
       }
+      ChessPieceType = Resources.Knight;
     }
-    public override List<Square> GetAvailableMoves(Square SelectedSquare, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
+    public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {
       List<Square> knightMoves = new List<Square>();
 
@@ -41,8 +38,8 @@ namespace ChessGame.Model
 
       for (int i = 0; i < 8; i++)
       {
-        char letter = (char)(SelectedSquare.Id[0] + lin[i]);
-        char digit = (char)(SelectedSquare.Id[1] + col[i]);
+        char letter = (char)(piece.Location[0] + lin[i]);
+        char digit = (char)(piece.Location[1] + col[i]);
         if (letter >= 'A' && letter <= 'H' && digit >= '1' && digit <= '8')
           directions.Add(letter.ToString() + digit.ToString());
 
@@ -51,9 +48,8 @@ namespace ChessGame.Model
       foreach (var dir in directions)
       {
 
-        var piece = pieces.FirstOrDefault(p => p.Location == dir && p.IsWhite == SelectedSquare.Piece.IsWhite);
         //  if there's no piece with the same color
-        if (piece == null)
+        if (pieces.FirstOrDefault(p => p.Location == dir && p.IsWhite == piece.IsWhite) == null)
         {
           var c = mapper.StringToCoordinates[dir];
           knightMoves.Add(chessBoard[c.i][c.j]);
@@ -62,7 +58,5 @@ namespace ChessGame.Model
 
       return knightMoves;
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
   }
 }

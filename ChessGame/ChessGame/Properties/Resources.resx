@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Bishop" xml:space="preserve">
-    <value>bishop</value>
+    <value>Bishop</value>
   </data>
   <data name="BlackBishop" xml:space="preserve">
     <value>black_bishop</value>
@@ -139,22 +139,22 @@
     <value>black_rook</value>
   </data>
   <data name="King" xml:space="preserve">
-    <value>king</value>
+    <value>King</value>
   </data>
   <data name="Knight" xml:space="preserve">
-    <value>knight</value>
+    <value>Knight</value>
   </data>
   <data name="NoPiece" xml:space="preserve">
     <value>no_piece</value>
   </data>
   <data name="Pawn" xml:space="preserve">
-    <value>pawn</value>
+    <value>Pawn</value>
   </data>
   <data name="Queen" xml:space="preserve">
-    <value>queen</value>
+    <value>Queen</value>
   </data>
   <data name="Rook" xml:space="preserve">
-    <value>rook</value>
+    <value>Rook</value>
   </data>
   <data name="WhiteBishop" xml:space="preserve">
     <value>white_bishop</value>

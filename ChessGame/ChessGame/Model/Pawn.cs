@@ -1,16 +1,12 @@
 ﻿using ChessGame.Mapper;
 using ChessGame.Properties;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Model
 {
-  class Pawn : ChessPiece, INotifyPropertyChanged
+  class Pawn : ChessPiece
   {
     public Pawn(bool isWhite, string location)
     {
@@ -29,15 +25,16 @@ namespace ChessGame.Model
         ChessPieceName = Resources.BlackPawn;
 
       }
+      ChessPieceType = Resources.Pawn;
 
 
     }
-    public override List<Square> GetAvailableMoves( Square SelectedSquare, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
+    public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {
       List<Square> pawnMoves = new List<Square>();
 
-      string location = SelectedSquare.Piece.Location;
-      int myOffset = SelectedSquare.Piece.IsWhite ? 1 : -1;
+      string location = piece.Location;
+      int myOffset = piece.IsWhite ? 1 : -1;
       string newLocation = location[0].ToString() + ((char)(location[1] + myOffset)).ToString();
 
       if (newLocation[1] >= '1' && newLocation[1] <= '8' && !pieces.Any(p => p.Location == newLocation))
@@ -57,7 +54,7 @@ namespace ChessGame.Model
 
       if (newLocation[0] >= 'A' && newLocation[0] <= 'H' &&
         newLocation[1] >= '0' && newLocation[1] <= '9' &&
-       pieces.Any(p => p.Location == newLocation && p.IsWhite != SelectedSquare.Piece.IsWhite))
+       pieces.Any(p => p.Location == newLocation && p.IsWhite != piece.IsWhite))
       {
         var c = mapper.StringToCoordinates[newLocation];
         pawnMoves.Add(chessBoard[c.i][c.j]);
@@ -67,7 +64,7 @@ namespace ChessGame.Model
 
       if (newLocation[0] >= 'A' && newLocation[0] <= 'H' &&
         newLocation[1] >= '0' && newLocation[1] <= '9' &&
-       pieces.Any(p => p.Location == newLocation && p.IsWhite != SelectedSquare.Piece.IsWhite))
+       pieces.Any(p => p.Location == newLocation && p.IsWhite != piece.IsWhite))
       {
         var c = mapper.StringToCoordinates[newLocation];
         pawnMoves.Add(chessBoard[c.i][c.j]);
@@ -76,6 +73,5 @@ namespace ChessGame.Model
       return pawnMoves;
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
   }
 }

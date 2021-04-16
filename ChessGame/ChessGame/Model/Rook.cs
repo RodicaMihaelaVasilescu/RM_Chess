@@ -1,16 +1,11 @@
 ﻿using ChessGame.Mapper;
 using ChessGame.Properties;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Model
 {
-  class Rook : ChessPiece, INotifyPropertyChanged
+  class Rook : ChessPiece
   {
     public Rook(bool isWhite, string location)
     {
@@ -29,21 +24,19 @@ namespace ChessGame.Model
         ChessPieceName = Resources.BlackRook;
 
       }
+      ChessPieceType = Resources.Rook;
     }
 
-    public override List<Square> GetAvailableMoves(Square SelectedSquare, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
+    public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {
       List<Square> rookMoves = new List<Square>();
 
-      rookMoves.AddRange(DiagonalAndLinearMove(0, 1, SelectedSquare, pieces, chessBoard));
-      rookMoves.AddRange(DiagonalAndLinearMove(0, -1, SelectedSquare, pieces, chessBoard));
-      rookMoves.AddRange(DiagonalAndLinearMove(-1, 0, SelectedSquare, pieces, chessBoard));
-      rookMoves.AddRange(DiagonalAndLinearMove(1, 0, SelectedSquare, pieces, chessBoard));
+      rookMoves.AddRange(DiagonalAndLinearMove(0, 1, piece, pieces, chessBoard));
+      rookMoves.AddRange(DiagonalAndLinearMove(0, -1, piece, pieces, chessBoard));
+      rookMoves.AddRange(DiagonalAndLinearMove(-1, 0, piece, pieces, chessBoard));
+      rookMoves.AddRange(DiagonalAndLinearMove(1, 0, piece, pieces, chessBoard));
 
       return rookMoves;
     }
-
-
-    public event PropertyChangedEventHandler PropertyChanged;
   }
 }

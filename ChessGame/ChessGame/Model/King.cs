@@ -1,16 +1,12 @@
 ﻿using ChessGame.Mapper;
 using ChessGame.Properties;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ChessGame.Model
 {
-  class King : ChessPiece, INotifyPropertyChanged
+  class King : ChessPiece
   {
     public King(bool isWhite, string location)
     {
@@ -29,9 +25,10 @@ namespace ChessGame.Model
         ChessPieceName = Resources.BlackKing;
 
       }
+      ChessPieceType = Resources.King;
     }
 
-    public override List<Square> GetAvailableMoves(Square SelectedSquare, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
+    public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {
       List<int> lin = new List<int>() { 0, 0, 1, 1, 1, -1, -1, -1 };
       List<int> col = new List<int>() { 1, -1, 0, 1, -1, 0, 1, -1 };
@@ -41,10 +38,10 @@ namespace ChessGame.Model
       for (int i = 0; i < 8; i++)
       {
 
-        char letter = (char)(SelectedSquare.Id[0] + lin[i]);
-        char digit = (char)(SelectedSquare.Id[1] + col[i]);
+        char letter = (char)(piece.Location[0] + lin[i]);
+        char digit = (char)(piece.Location[1] + col[i]);
         var location = letter.ToString() + digit.ToString();
-        if (!(letter >= 'A' && letter <= 'H' && digit >= '1' && digit <= '8') || pieces.Any(p => p.IsWhite == SelectedSquare.Piece.IsWhite && p.Location == location))
+        if (!(letter >= 'A' && letter <= 'H' && digit >= '1' && digit <= '8') || pieces.Any(p => p.IsWhite == piece.IsWhite && p.Location == location))
         {
           continue;
         }
@@ -54,7 +51,5 @@ namespace ChessGame.Model
       return moves;
 
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
   }
 }

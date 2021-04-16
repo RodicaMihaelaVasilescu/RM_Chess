@@ -62,9 +62,6 @@
     <Compile Include="Mapper\ChessPieceLocation.cs" />
     <Compile Include="Mapper\Pair.cs" />
     <Compile Include="Model\Bishop.cs" />
-    <Compile Include="Model\ChessBoard.cs" />
-    <Compile Include="Model\ChessBoardModel.cs" />
-    <Compile Include="Model\ChessBoardConfiguration.cs" />
     <Compile Include="Model\ChessPiece.cs" />
     <Compile Include="Model\King.cs" />
     <Compile Include="Model\Knight.cs" />
