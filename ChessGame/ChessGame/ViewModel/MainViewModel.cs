@@ -160,8 +160,6 @@ namespace ChessGame.ViewModel
       var piecesList = new List<ChessPiece>();
       if (pieces == null)
       {
-
-
         // add pawns
         for (int i = 0; i < 8; i++)
         {
@@ -186,7 +184,6 @@ namespace ChessGame.ViewModel
         piecesList.Add(new Bishop(isFirstPlayerWhite, "F1"));
         piecesList.Add(new Bishop(!isFirstPlayerWhite, "C8"));
         piecesList.Add(new Bishop(!isFirstPlayerWhite, "F8"));
-
 
         //add queens
         piecesList.Add(new Queen(isFirstPlayerWhite, isFirstPlayerWhite ? "D1" : "E1"));
@@ -258,6 +255,11 @@ namespace ChessGame.ViewModel
       //clear
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
 
+      MarkAvailableSquares(previousSelectedPiece);
+    }
+
+    private void MarkAvailableSquares(Square previousSelectedPiece)
+    {
       // if the same piece is selected
       if (previousSelectedPiece == SelectedSquare)
       {
@@ -315,6 +317,7 @@ namespace ChessGame.ViewModel
           }
         }
       }
+
     }
 
     private List<Square> GetCopyOfListOfSquare(List<Square> markedAsAvailableSquares)
@@ -542,7 +545,7 @@ namespace ChessGame.ViewModel
       }
 
       // all pieces
-      var kings = movements.Where(p => p.Piece != null && p.Piece.ChessPieceType != null && p.Piece.ChessPieceType.Contains(Resources.King)).ToList().Distinct();
+      var kings = movements.Where(p => p.Piece != null && p.Piece.ChessPieceType != null && p.Piece.ChessPieceType.Contains(Resources.King) && p.Piece.IsWhite == IsWhiteTurn).ToList().Distinct();
 
       foreach (var king in kings)
       {
