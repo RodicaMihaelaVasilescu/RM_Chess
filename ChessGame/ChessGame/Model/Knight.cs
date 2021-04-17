@@ -16,13 +16,13 @@ namespace ChessGame.Model
 
       if (isWhite)
       {
-        ChessPieceIcon += Resources.WhiteHorse + ".png";
-        ChessPieceName = Resources.WhiteHorse;
+        ChessPieceIcon += Resources.WhiteKnight + ".png";
+        ChessPieceName = Resources.WhiteKnight;
       }
       else
       {
-        ChessPieceIcon += Resources.BlackHorse + ".png";
-        ChessPieceName = Resources.BlackHorse;
+        ChessPieceIcon += Resources.BlackKnight + ".png";
+        ChessPieceName = Resources.BlackKnight;
 
       }
       ChessPieceType = Resources.Knight;

@@ -79,20 +79,20 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to black_horse.
-        /// </summary>
-        internal static string BlackHorse {
-            get {
-                return ResourceManager.GetString("BlackHorse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to black_king.
         /// </summary>
         internal static string BlackKing {
             get {
                 return ResourceManager.GetString("BlackKing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to black_knight.
+        /// </summary>
+        internal static string BlackKnight {
+            get {
+                return ResourceManager.GetString("BlackKnight", resourceCulture);
             }
         }
         
@@ -187,20 +187,20 @@ namespace ChessGame.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to white_horse.
-        /// </summary>
-        internal static string WhiteHorse {
-            get {
-                return ResourceManager.GetString("WhiteHorse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to white_king.
         /// </summary>
         internal static string WhiteKing {
             get {
                 return ResourceManager.GetString("WhiteKing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to white_knight.
+        /// </summary>
+        internal static string WhiteKnight {
+            get {
+                return ResourceManager.GetString("WhiteKnight", resourceCulture);
             }
         }
         

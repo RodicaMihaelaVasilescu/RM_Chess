@@ -11,7 +11,7 @@ namespace ChessGame.Model
     private SolidColorBrush background;
     public string Id { get; set; }
     public string ChessPieceName { get; set; }
-    public double SquareSize { get; set; } = 60;
+    public double SquareSize { get; set; } = 53;
 
     private string chessPieceIcon;
 

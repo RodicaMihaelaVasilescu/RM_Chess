@@ -60,6 +60,12 @@ namespace ChessGame.ViewModel
       {
         if (selectedMovementIndex == value) return;
         selectedMovementIndex = value;
+        //IsWhiteTurn = value % 2 == 0 ? true : false;
+        if (ChessBoard != null && ChessBoard.Count() >= value)
+        {
+          ChessBoard = listOfChessBoards[value];
+
+        }
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMovementIndex"));
       }
     }
@@ -105,18 +111,24 @@ namespace ChessGame.ViewModel
     private void ResetCommandExecute()
     {
       Movements.Clear();
+      ListOfMovements.Clear();
+      listOfChessBoards.Clear();
       IsWhiteTurn = true;
       isFirstPlayerWhite = !isFirstPlayerWhite;
+
       pieces.Clear();
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
       InitializeChessBoard();
+
 
     }
 
     public void InitializeChessBoard()
     {
+      ListOfMovements.Add("Chessboard");
       ChessBoard = GetEmptyChessBoard();
       pieces = PlaceChessPieces(chessBoard);
+      listOfChessBoards.Add(GetDuplicateOfChessBoard(ChessBoard));
     }
 
 
@@ -147,7 +159,7 @@ namespace ChessGame.ViewModel
         ClearChessBoard.Add(lineOfSquares);
       }
 
-      listOfChessBoards.Add(ClearChessBoard);
+      //listOfChessBoards.Add(ClearChessBoard);
       return ClearChessBoard;
     }
 
@@ -236,6 +248,8 @@ namespace ChessGame.ViewModel
         if (MovePiece2(SelectedSquare, previousSelectedPiece, ChessBoard, pieces, markedAsAvailableSquares))
         {
           Movements[SelectedSquare.Id] = previousSelectedPiece.Id;
+          listOfChessBoards.Add(GetDuplicateOfChessBoard(ChessBoard));
+          ListOfMovements.Add(SelectedSquare.Piece.ChessPieceName.Replace('_', ' ') + ": " + previousSelectedPiece.Id + " - " + SelectedSquare.Id);
           IsWhiteTurn = !IsWhiteTurn;
         }
         else
@@ -317,7 +331,6 @@ namespace ChessGame.ViewModel
           }
         }
       }
-
     }
 
     private List<Square> GetCopyOfListOfSquare(List<Square> markedAsAvailableSquares)
@@ -413,6 +426,8 @@ namespace ChessGame.ViewModel
               c = mapper.StringToCoordinates[king];
               chessBoard[c.i][c.j].Piece = kingTemp;
 
+
+              ListOfMovements.Add((IsWhiteTurn ? "White: " : "Black: ") + "Castle");
               IsWhiteTurn = !IsWhiteTurn;
               return;
 

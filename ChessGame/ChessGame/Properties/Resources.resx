@@ -123,11 +123,11 @@
   <data name="BlackBishop" xml:space="preserve">
     <value>black_bishop</value>
   </data>
-  <data name="BlackHorse" xml:space="preserve">
-    <value>black_horse</value>
-  </data>
   <data name="BlackKing" xml:space="preserve">
     <value>black_king</value>
+  </data>
+  <data name="BlackKnight" xml:space="preserve">
+    <value>black_knight</value>
   </data>
   <data name="BlackPawn" xml:space="preserve">
     <value>black_pawn</value>
@@ -159,11 +159,11 @@
   <data name="WhiteBishop" xml:space="preserve">
     <value>white_bishop</value>
   </data>
-  <data name="WhiteHorse" xml:space="preserve">
-    <value>white_horse</value>
-  </data>
   <data name="WhiteKing" xml:space="preserve">
     <value>white_king</value>
+  </data>
+  <data name="WhiteKnight" xml:space="preserve">
+    <value>white_knight</value>
   </data>
   <data name="WhitePawn" xml:space="preserve">
     <value>white_pawn</value>

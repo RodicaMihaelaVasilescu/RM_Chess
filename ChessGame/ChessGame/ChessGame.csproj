@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -35,6 +37,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MaterialDesignColors, Version=2.0.0.2422, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.2.0.0\lib\net452\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=4.0.0.2422, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.4.0.0\lib\net452\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
@@ -101,6 +109,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -128,13 +137,11 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\ChessPieces\black_bishop.png" />
-    <Resource Include="Resources\ChessPieces\black_horse.png" />
     <Resource Include="Resources\ChessPieces\black_king.png" />
     <Resource Include="Resources\ChessPieces\black_pawn.png" />
     <Resource Include="Resources\ChessPieces\black_queen.png" />
     <Resource Include="Resources\ChessPieces\black_rook.png" />
     <Resource Include="Resources\ChessPieces\white_bishop.png" />
-    <Resource Include="Resources\ChessPieces\white_horse.png" />
     <Resource Include="Resources\ChessPieces\white_king.png" />
     <Resource Include="Resources\ChessPieces\white_pawn.png" />
     <Resource Include="Resources\ChessPieces\white_queen.png" />
@@ -150,10 +157,20 @@
     <Resource Include="Resources\available_piece.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ChessPieces\black_knight.png" />
+    <Resource Include="Resources\ChessPieces\white_knight.png" />
+    <Resource Include="Resources\chat.png" />
     <Content Include="Resources\click.mp3" />
     <Content Include="Resources\click.wav" />
     <Content Include="Resources\click2.mp3" />
     <Content Include="Resources\click2.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets'))" />
+  </Target>
 </Project>
