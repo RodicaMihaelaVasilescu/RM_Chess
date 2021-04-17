@@ -58,5 +58,45 @@ namespace ChessGame
       simpleSound.Play();
     }
 
+    private void ChessboardItem_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.Key >= Key.A && e.Key <= Key.Z /*&& MyTextBox.IsFocused == false*/)
+      {
+        return;
+      }
+      switch (e.Key)
+      {
+        case Key.Down:
+          if (viewModel.SelectedMovementIndex > 0)
+            viewModel.SelectedMovementIndex--;
+          e.Handled = true;
+          break;
+        case Key.Right:
+          if (viewModel.SelectedMovementIndex < viewModel.ListOfMovements.Count - 1)
+            viewModel.SelectedMovementIndex++;
+          e.Handled = true;
+          break;
+        case Key.Left:
+          if (viewModel.SelectedMovementIndex > 0)
+            viewModel.SelectedMovementIndex--;
+          e.Handled = true;
+          break;
+        case Key.Up:
+          if (viewModel.SelectedMovementIndex < viewModel.ListOfMovements.Count - 1)
+            viewModel.SelectedMovementIndex++;
+          e.Handled = true;
+          break;
+        //case Key.Enter:
+        //  if (MyTextBox.IsFocused == false)
+        //  {
+        //    viewModel.FindCommandExecute();
+        //    e.Handled = true;
+        //  }
+        //  break;
+        default: break;
+      }
+
+
+    }
   }
 }

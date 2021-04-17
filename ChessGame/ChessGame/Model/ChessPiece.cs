@@ -15,10 +15,7 @@ namespace ChessGame.Model
 {
   class ChessPiece : INotifyPropertyChanged
   {
-    public ChessPiece()
-    {
-
-    }
+    public ChessPiece() { }
 
     public ChessPiece(ChessPiece piece)
     {
@@ -39,7 +36,7 @@ namespace ChessGame.Model
     public string ChessPieceName { get; set; }
     public string ChessPieceType { get; set; }
 
-    public ChessPieceLocation mapper = new ChessPieceLocation();
+    public ChessPieceLocation mapper = ChessPieceLocation.Instance;
 
     public bool IsWhite { get; set; }
 
@@ -99,7 +96,7 @@ namespace ChessGame.Model
         pawnMoves.Add(chessBoard[c.i][c.j]);
 
         newLocation = location[0].ToString() + ((char)(location[1] + 2 * myOffset)).ToString();
-        if (newLocation[1] >= '1' && newLocation[1] <= '8' && !pieces.Any(p => p.Location == newLocation) && !Movements.ContainsValue(location))
+        if (newLocation[1] >= '1' && newLocation[1] <= '8' && !pieces.Any(p => p.Location == newLocation) && !Movements.ContainsKey(location) &&!Movements.ContainsValue(location))
         {
           c = mapper.StringToCoordinates[newLocation];
           pawnMoves.Add(chessBoard[c.i][c.j]);
@@ -197,7 +194,8 @@ namespace ChessGame.Model
     {
       List<Square> moves = new List<Square>();
 
-
+      if (piece == null || piece.Location == null)
+        return moves;
       for (int k = 1; k <= 8; k++)
       {
         char letter = (char)(piece.Location[0] + offsetX * k);

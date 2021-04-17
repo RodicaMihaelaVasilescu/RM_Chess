@@ -66,13 +66,15 @@ namespace ChessGame.ViewModel
           ChessBoard = listOfChessBoards[value];
 
         }
+
+
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedMovementIndex"));
       }
     }
 
 
 
-    ChessPieceLocation mapper = new ChessPieceLocation();
+    ChessPieceLocation mapper = ChessPieceLocation.Instance;
 
     public Boolean IsWhiteTurn = true;
     public Boolean isFirstPlayerWhite = true;
@@ -115,11 +117,9 @@ namespace ChessGame.ViewModel
       listOfChessBoards.Clear();
       IsWhiteTurn = true;
       isFirstPlayerWhite = !isFirstPlayerWhite;
-
       pieces.Clear();
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
       InitializeChessBoard();
-
 
     }
 
@@ -129,6 +129,7 @@ namespace ChessGame.ViewModel
       ChessBoard = GetEmptyChessBoard();
       pieces = PlaceChessPieces(chessBoard);
       listOfChessBoards.Add(GetDuplicateOfChessBoard(ChessBoard));
+
     }
 
 
@@ -145,7 +146,6 @@ namespace ChessGame.ViewModel
           Square square = new Square();
           var coordinates = new Pair(i, j);
           square.Id = mapper.CoordinatesToString[coordinates];
-          square.ChessPieceName = Resources.NoPiece;
           lineOfSquares.Add(square);
           if ((coordinates.i + coordinates.j) % 2 == 0)
           {
@@ -159,7 +159,6 @@ namespace ChessGame.ViewModel
         ClearChessBoard.Add(lineOfSquares);
       }
 
-      //listOfChessBoards.Add(ClearChessBoard);
       return ClearChessBoard;
     }
 
@@ -172,6 +171,8 @@ namespace ChessGame.ViewModel
       var piecesList = new List<ChessPiece>();
       if (pieces == null)
       {
+
+
         // add pawns
         for (int i = 0; i < 8; i++)
         {
@@ -197,6 +198,7 @@ namespace ChessGame.ViewModel
         piecesList.Add(new Bishop(!isFirstPlayerWhite, "C8"));
         piecesList.Add(new Bishop(!isFirstPlayerWhite, "F8"));
 
+
         //add queens
         piecesList.Add(new Queen(isFirstPlayerWhite, isFirstPlayerWhite ? "D1" : "E1"));
         piecesList.Add(new Queen(!isFirstPlayerWhite, isFirstPlayerWhite ? "D8" : "E8"));
@@ -221,6 +223,7 @@ namespace ChessGame.ViewModel
     }
 
     Square ChessState = null;
+
     public void DisplayAvailableSquares(String squareId)
     {
       var previousSelectedPiece = SelectedSquare;
@@ -231,11 +234,28 @@ namespace ChessGame.ViewModel
         return;
       }
 
+
       if (previousSelectedPiece != null && previousSelectedPiece.Background != null)
       {
         var c = mapper.StringToCoordinates[previousSelectedPiece.Id];
         chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
 
+      }
+
+      if (ChessState != null && ChessState.Piece != null)
+      {
+        IsWhiteTurn = ChessState.Piece.IsWhite;
+        //ChessState.Background = ChessBackground;
+
+        //var king = pieces.FirstOrDefault(k => k.IsWhite == ChessState.Piece.IsWhite && k.ChessPieceType.Contains(Resources.King));
+        //if (king != null)
+        //{
+        //  var kingSquare = GetSelectedPiece(king.Location, ChessBoard);
+        //  if (kingSquare != null)
+        //  {
+        //    kingSquare.Background = ChessBackground;
+        //  }
+        //}
       }
 
 
@@ -245,16 +265,19 @@ namespace ChessGame.ViewModel
       // if is moved
       if (markedAsAvailableSquares.Contains(SelectedSquare))
       {
-        if (MovePiece2(SelectedSquare, previousSelectedPiece, ChessBoard, pieces, markedAsAvailableSquares))
+        if (MovePiece(SelectedSquare, previousSelectedPiece, ChessBoard, pieces, markedAsAvailableSquares, "Move"))
         {
           Movements[SelectedSquare.Id] = previousSelectedPiece.Id;
           listOfChessBoards.Add(GetDuplicateOfChessBoard(ChessBoard));
           ListOfMovements.Add(SelectedSquare.Piece.ChessPieceName.Replace('_', ' ') + ": " + previousSelectedPiece.Id + " - " + SelectedSquare.Id);
+
           IsWhiteTurn = !IsWhiteTurn;
+          if (ChessState != null)
+            ChessState.Background = ChessBackground;
         }
         else
         {
-          // is in chess state
+          //is in chess state
           if (ChessState != null && ChessState.Piece != null)
           {
             IsWhiteTurn = ChessState.Piece.IsWhite;
@@ -262,18 +285,19 @@ namespace ChessGame.ViewModel
           }
 
         }
-        //IsInChessState();
         return;
       }
 
       //clear
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
 
+
       MarkAvailableSquares(previousSelectedPiece);
     }
 
     private void MarkAvailableSquares(Square previousSelectedPiece)
     {
+
       // if the same piece is selected
       if (previousSelectedPiece == SelectedSquare)
       {
@@ -303,7 +327,7 @@ namespace ChessGame.ViewModel
           var currentSquare = GetSelectedPiece(SelectedSquare.Id, nextChessboardConfiguration);
           var nextMove = copyAvailableSquares.Where(p => p.Id == move.Id).FirstOrDefault();
 
-          if (!MovePiece2(nextMove, currentSquare, nextChessboardConfiguration, copyPieces, copyAvailableSquares))
+          if (!MovePiece(nextMove, currentSquare, nextChessboardConfiguration, copyPieces, copyAvailableSquares, "CheckFutureMoves"))
           {
             if (ChessState != null && ChessState.Piece != null && SelectedSquare.Piece.IsWhite == ChessState.Piece.IsWhite)
               toRemove.Add(move);
@@ -396,6 +420,7 @@ namespace ChessGame.ViewModel
             }
             if (canMakeRocada)
             {
+              ListOfMovements.Add((IsWhiteTurn ? "white: " : "black: ") + "castle");
               ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
 
               var c = mapper.StringToCoordinates[SelectedSquare.Piece.Location];
@@ -426,8 +451,6 @@ namespace ChessGame.ViewModel
               c = mapper.StringToCoordinates[king];
               chessBoard[c.i][c.j].Piece = kingTemp;
 
-
-              ListOfMovements.Add((IsWhiteTurn ? "White: " : "Black: ") + "Castle");
               IsWhiteTurn = !IsWhiteTurn;
               return;
 
@@ -438,76 +461,9 @@ namespace ChessGame.ViewModel
 
     }
 
-    private bool MovePiece2(Square currentSquare, Square previousSquare, ObservableCollection<ObservableCollection<Square>> ChessBoard, List<ChessPiece> pieces, List<Square> markedAsAvailableSquares)
-    {
-      ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
-
-      if (currentSquare != null)
-      {
-        //remove current piece
-        pieces.RemoveAll(p => p.Location == currentSquare.Id);
-      }
-
-      //switch pieces and update location
-      var piece = pieces.FirstOrDefault(p => p.Location == previousSquare.Id);
-      piece.Location = currentSquare.Id;
-      currentSquare.Piece = piece;
-      previousSquare.Piece = new ChessPiece();
-      var c = mapper.StringToCoordinates[currentSquare.Id];
-      ChessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
-
-
-      if (currentSquare.Piece.ChessPieceType.Contains(Resources.Pawn))
-      {
-        if (currentSquare.Piece.Location[1] == '1' || currentSquare.Piece.Location[1] == '8')
-        {
-          var temp = new ChessPiece();
-          temp = piece;
-          piece = new Queen(temp.IsWhite, temp.Location);
-
-          pieces.RemoveAll(p => p.Location == currentSquare.Id);
-          c = mapper.StringToCoordinates[piece.Location];
-          ChessBoard[c.i][c.j].Piece = piece;
-        }
-      }
-
-      if (IsInChessState2(ChessBoard, pieces, piece))
-      {
-        return false;
-      }
-      return true;
-    }
-
-    private bool IsInChessState1(ObservableCollection<ObservableCollection<Square>> chessBoard, List<ChessPiece> pieces)
-    {
-      var movements = new List<Square>();
-
-      foreach (var piece in pieces)
-      {
-        if (piece != null)
-        {
-          var x = piece.GetAvailableMoves(piece, pieces, chessBoard, Movements);
-          movements.AddRange(piece.GetAvailableMoves(piece, pieces, chessBoard, Movements));
-        }
-      }
-
-
-
-      // all pieces
-      var kings = movements.Where(p => p.Piece != null && p.Piece.ChessPieceType != null && p.Piece.ChessPieceType.Contains(Resources.King)).ToList().Distinct();
-
-      foreach (var king in kings)
-      {
-        ChessState = king;
-        return true;
-      }
-      ChessState = null;
-      return false;
-    }
-
-    private bool MovePiece1(Square currentSquare, Square previousSquare,
+    private bool MovePiece(Square currentSquare, Square previousSquare,
       ObservableCollection<ObservableCollection<Square>> ChessBoard, List<ChessPiece> pieces,
-      List<Square> markedAsAvailableSquares)
+      List<Square> markedAsAvailableSquares, string action)
     {
       ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
 
@@ -516,6 +472,7 @@ namespace ChessGame.ViewModel
         //remove current piece
         pieces.RemoveAll(p => p.Location == currentSquare.Id);
       }
+
 
       //switch pieces and update location
       var piece = pieces.FirstOrDefault(p => p.Location == previousSquare.Id);
@@ -530,24 +487,28 @@ namespace ChessGame.ViewModel
       {
         if (currentSquare.Piece.Location[1] == '1' || currentSquare.Piece.Location[1] == '8')
         {
-          var temp = new ChessPiece();
-          temp = piece;
-          piece = new Queen(temp.IsWhite, temp.Location);
-
-          pieces.RemoveAll(p => p.Location == currentSquare.Id);
-          c = mapper.StringToCoordinates[piece.Location];
-          ChessBoard[c.i][c.j].Piece = piece;
+          PromotePawnToQueen(piece, currentSquare.Id);
         }
       }
 
-      if (IsInChessState2(ChessBoard, pieces, currentSquare.Piece))
+      if (IsInChessState(ChessBoard, pieces, currentSquare.Piece.IsWhite, action))
       {
         return false;
       }
       return true;
     }
 
-    private bool IsInChessState2(ObservableCollection<ObservableCollection<Square>> chessBoard, List<ChessPiece> pieces, ChessPiece currentPiece)
+    private void PromotePawnToQueen(ChessPiece piece, string id)
+    {
+      var newQueen = new Queen(piece.IsWhite, piece.Location);
+
+      pieces.RemoveAll(p => p.Location == id);
+      pieces.Add(newQueen);
+      var c = mapper.StringToCoordinates[newQueen.Location];
+      ChessBoard[c.i][c.j].Piece = newQueen;
+    }
+
+    private bool IsInChessState(ObservableCollection<ObservableCollection<Square>> chessBoard, List<ChessPiece> pieces, bool isWhite, string action)
     {
       var movements = new List<Square>();
 
@@ -561,18 +522,51 @@ namespace ChessGame.ViewModel
 
       // all pieces
       var kings = movements.Where(p => p.Piece != null && p.Piece.ChessPieceType != null && p.Piece.ChessPieceType.Contains(Resources.King) && p.Piece.IsWhite == IsWhiteTurn).ToList().Distinct();
+      var kings2 = movements.Where(p => p.Piece != null && p.Piece.ChessPieceType != null && p.Piece.ChessPieceType.Contains(Resources.King) && p.Piece.IsWhite == !IsWhiteTurn).ToList().Distinct();
 
+      if (action == "Move" && kings2.Any())
+      {
+        //if (isCheckmate(!isWhite))
+        //{
+        //  ListOfMovements.Add("Checkmate!");
+        //  kings2.FirstOrDefault().Background = Brushes.Violet;
+        //}
+        ChessState = kings2.FirstOrDefault();
+        ChessState.Background = ChessBackground;
+      }
       foreach (var king in kings)
       {
         ChessState = king;
+        if (ChessState != null)
+          ChessState.Background = ChessBackground;
         return true;
       }
+
       ChessState = null;
       return false;
 
     }
 
-    ObservableCollection<ObservableCollection<Square>> ClearAvailableSquares(ObservableCollection<ObservableCollection<Square>> chessBoard, List<Square> markedAsAvailableSquares)
+    //private bool isCheckmate(bool isWhite)
+    //{
+    //  var movements = new List<Square>();
+
+    //  foreach (var piece in pieces)
+    //  {
+    //    if (piece != null && piece.IsWhite == isWhite)
+    //    {
+    //      movements.AddRange(piece.GetAvailableMoves(piece, pieces, chessBoard, Movements));
+    //    }
+    //  }
+    //  if (!movements.Any())
+    //  {
+    //    return true;
+    //  }
+    //  return false;
+    //}
+
+    ObservableCollection<ObservableCollection<Square>> ClearAvailableSquares
+      (ObservableCollection<ObservableCollection<Square>> chessBoard, List<Square> markedAsAvailableSquares)
     {
 
       foreach (var currentSquare in markedAsAvailableSquares)

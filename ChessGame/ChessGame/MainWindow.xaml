@@ -172,6 +172,7 @@
               <DataTemplate>
                 <ListView
                   Name="ChessboardItem"
+                  PreviewKeyDown="ChessboardItem_PreviewKeyDown"
                   Margin="0"
                   Background="Transparent"
                   BorderThickness="0"
