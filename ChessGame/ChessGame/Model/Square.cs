@@ -19,7 +19,9 @@ namespace ChessGame.Model
     public Square(Square square)
     {
       this.background = square.Background;
-      this.Piece = new ChessPiece(square.Piece);
+
+      var newPiece = Activator.CreateInstance(piece.GetType(), new object[] { square.Piece });
+      this.Piece = (ChessPiece)newPiece;
       this.Id = square.Id;
       this.ChessPieceIcon = square.ChessPieceIcon;
       this.ChessPieceName = square.ChessPieceName;

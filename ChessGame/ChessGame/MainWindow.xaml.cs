@@ -54,8 +54,19 @@ namespace ChessGame
 
       viewModel.DisplayAvailableSquares(listViewItem.Content.ToString());
 
-      SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
-      simpleSound.Play();
+      if (viewModel.Action == "Move")
+      {
+        if (viewModel.IsPieceCaptured)
+        {
+          SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click2.wav");
+          simpleSound.Play();
+        }
+        else
+        {
+          SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
+          simpleSound.Play();
+        }
+      }
     }
 
     private void ChessboardItem_PreviewKeyDown(object sender, KeyEventArgs e)
