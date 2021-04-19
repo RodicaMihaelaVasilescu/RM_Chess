@@ -54,7 +54,7 @@ namespace ChessGame
 
       viewModel.DisplayAvailableSquares(listViewItem.Content.ToString());
 
-      if (viewModel.Action == "Move")
+      if (viewModel.AddMoveSound)
       {
         if (viewModel.IsPieceCaptured)
         {
@@ -66,6 +66,12 @@ namespace ChessGame
           SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
           simpleSound.Play();
         }
+      }
+
+      if(viewModel.Checkmate)
+      {
+        SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\checkmate.wav");
+        simpleSound.Play();
       }
     }
 

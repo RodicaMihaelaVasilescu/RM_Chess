@@ -160,6 +160,7 @@
     <Resource Include="Resources\ChessPieces\black_knight.png" />
     <Resource Include="Resources\ChessPieces\white_knight.png" />
     <Resource Include="Resources\chat.png" />
+    <Content Include="Resources\checkmate.wav" />
     <Content Include="Resources\click.mp3" />
     <Content Include="Resources\click.wav" />
     <Content Include="Resources\click2.mp3" />
