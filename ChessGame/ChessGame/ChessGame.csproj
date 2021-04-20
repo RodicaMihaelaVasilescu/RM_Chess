@@ -120,9 +120,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\chessboard2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\background.jpg" />
   </ItemGroup>
   <ItemGroup>
