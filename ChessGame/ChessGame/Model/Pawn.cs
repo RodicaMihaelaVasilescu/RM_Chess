@@ -12,22 +12,8 @@ namespace ChessGame.Model
     {
       IsWhite = isWhite;
       Location = location;
-      Coordinates = ChessPieceLocation.Instance.StringToCoordinates[location];
-
-      if (isWhite)
-      {
-        ChessPieceIcon += Resources.WhitePawn + ".png";
-        ChessPieceName = Resources.WhitePawn;
-      }
-      else
-      {
-        ChessPieceIcon += Resources.BlackPawn + ".png";
-        ChessPieceName = Resources.BlackPawn;
-
-      }
+      ChessPieceIcon += (isWhite ? Resources.WhitePawn : Resources.BlackPawn) + ".png";
       ChessPieceType = Resources.Pawn;
-
-
     }
     public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {

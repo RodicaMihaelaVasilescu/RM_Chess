@@ -73,6 +73,7 @@
     <Compile Include="Model\ChessPiece.cs" />
     <Compile Include="Model\King.cs" />
     <Compile Include="Model\Knight.cs" />
+    <Compile Include="Model\Movement.cs" />
     <Compile Include="Model\Pawn.cs" />
     <Compile Include="Model\Queen.cs" />
     <Compile Include="Model\Rook.cs" />
@@ -119,7 +120,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\chessboard.png" />
+    <Resource Include="Resources\chessboard2.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\background.jpg" />
@@ -161,6 +162,7 @@
     <Resource Include="Resources\ChessPieces\white_knight.png" />
     <Resource Include="Resources\chat.png" />
     <Content Include="Resources\checkmate.wav" />
+    <Resource Include="Resources\chessboard.png" />
     <Content Include="Resources\click.mp3" />
     <Content Include="Resources\click.wav" />
     <Content Include="Resources\click2.mp3" />

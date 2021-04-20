@@ -11,19 +11,7 @@ namespace ChessGame.Model
     {
       IsWhite = isWhite;
       Location = location;
-      Coordinates = ChessPieceLocation.Instance.StringToCoordinates[location];
-
-      if (isWhite)
-      {
-        ChessPieceIcon += Resources.WhiteRook + ".png";
-        ChessPieceName = Resources.WhiteRook;
-      }
-      else
-      {
-        ChessPieceIcon += Resources.BlackRook + ".png";
-        ChessPieceName = Resources.BlackRook;
-
-      }
+      ChessPieceIcon += (isWhite ? Resources.WhiteRook : Resources.BlackRook) + ".png";
       ChessPieceType = Resources.Rook;
     }
 

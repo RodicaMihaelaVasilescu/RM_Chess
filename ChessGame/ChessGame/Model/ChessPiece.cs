@@ -16,8 +16,6 @@ namespace ChessGame.Model
 
     public double Size { get; set; } = 50;
     public string Location { get; set; }
-    public Pair Coordinates { get; set; }
-    public string ChessPieceName { get; set; }
     public string ChessPieceType { get; set; }
     public bool IsWhite { get; set; }
 
@@ -28,12 +26,10 @@ namespace ChessGame.Model
     public ChessPiece(ChessPiece piece)
     {
       this.chessPieceIcon = piece.chessPieceIcon;
-      this.ChessPieceName = piece.ChessPieceName;
       this.Location = piece.Location;
       this.IsWhite = piece.IsWhite;
       this.mapper = piece.mapper;
       this.ChessPieceType = piece.ChessPieceType;
-      this.Coordinates = piece.Coordinates;
     }
 
     public String ChessPieceIcon

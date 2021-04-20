@@ -1,5 +1,4 @@
-﻿using ChessGame.Mapper;
-using ChessGame.Properties;
+﻿using ChessGame.Properties;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
@@ -11,19 +10,8 @@ namespace ChessGame.Model
     {
       IsWhite = isWhite;
       Location = location;
-      Coordinates = ChessPieceLocation.Instance.StringToCoordinates[location];
-      if (isWhite)
-      {
-        ChessPieceIcon += Resources.WhiteBishop + ".png";
-        ChessPieceName = Resources.WhiteBishop;
-      }
-      else
-      {
-        ChessPieceIcon += Resources.BlackBishop + ".png";
-        ChessPieceName = Resources.BlackBishop;
-
-      }
       ChessPieceType = Resources.Bishop;
+      ChessPieceIcon += (isWhite ? Resources.WhiteBishop : Resources.BlackBishop) + ".png";
     }
     public override List<Square> GetAvailableMoves(ChessPiece piece, List<ChessPiece> pieces, ObservableCollection<ObservableCollection<Square>> chessBoard, Dictionary<string, string> Movements)
     {

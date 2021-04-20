@@ -30,9 +30,7 @@ namespace ChessGame
     public MainWindow()
     {
       InitializeComponent();
-      viewModel = new MainViewModel();
-      DataContext = viewModel;
-      viewModel.InitializeChessBoard();
+
 
     }
 
@@ -42,6 +40,7 @@ namespace ChessGame
 
     private void ListViewItem_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
+
       var listViewItem = sender as ListViewItem;
       List<Square> l = new List<Square>();
       foreach (ObservableCollection<Square> sq in viewModel.ChessBoard)
@@ -68,7 +67,7 @@ namespace ChessGame
         }
       }
 
-      if(viewModel.Checkmate)
+      if(viewModel.IsCheckmate)
       {
         SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\checkmate.wav");
         simpleSound.Play();
@@ -77,7 +76,7 @@ namespace ChessGame
 
     private void ChessboardItem_PreviewKeyDown(object sender, KeyEventArgs e)
     {
-      if (e.Key >= Key.A && e.Key <= Key.Z /*&& MyTextBox.IsFocused == false*/)
+      if (e.Key >= Key.A && e.Key <= Key.Z)
       {
         return;
       }
@@ -103,17 +102,17 @@ namespace ChessGame
             viewModel.SelectedMovementIndex++;
           e.Handled = true;
           break;
-        //case Key.Enter:
-        //  if (MyTextBox.IsFocused == false)
-        //  {
-        //    viewModel.FindCommandExecute();
-        //    e.Handled = true;
-        //  }
-        //  break;
         default: break;
       }
 
 
+    }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+      viewModel = new MainViewModel();
+      DataContext = viewModel;
+      viewModel.InitializeChessBoard();
     }
   }
 }

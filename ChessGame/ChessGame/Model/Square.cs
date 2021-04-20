@@ -10,7 +10,6 @@ namespace ChessGame.Model
     private ChessPiece piece = new ChessPiece();
     private SolidColorBrush background;
     public string Id { get; set; }
-    public string ChessPieceName { get; set; }
     public double SquareSize { get; set; } = 53;
 
     private string chessPieceIcon;
@@ -24,7 +23,6 @@ namespace ChessGame.Model
       this.Piece = (ChessPiece)newPiece;
       this.Id = square.Id;
       this.ChessPieceIcon = square.ChessPieceIcon;
-      this.ChessPieceName = square.ChessPieceName;
     }
 
     public override string ToString()
