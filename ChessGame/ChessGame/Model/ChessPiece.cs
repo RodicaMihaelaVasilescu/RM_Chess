@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using ChessGame.Mapper;
 using System.Collections.ObjectModel;
+using System.Windows;
 //using ChessGame.Annotations;
 
 
@@ -14,7 +15,7 @@ namespace ChessGame.Model
   {
     private string chessPieceIcon = @"pack://application:,,,/ChessGame;component/Resources/ChessPieces/";
 
-    public double Size { get; set; } = 50;
+    public double Size { get; set; } = (SystemParameters.WorkArea.Height -50) / 11;
     public string Location { get; set; }
     public string ChessPieceType { get; set; }
     public bool IsWhite { get; set; }

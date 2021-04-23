@@ -10,7 +10,7 @@ namespace ChessGame.Model
     private ChessPiece piece = new ChessPiece();
     private SolidColorBrush background;
     public string Id { get; set; }
-    public double SquareSize { get; set; } = 53;
+    public double SquareSize { get; set; } = System.Windows.SystemParameters.WorkArea.Width/24;
 
     private string chessPieceIcon;
 

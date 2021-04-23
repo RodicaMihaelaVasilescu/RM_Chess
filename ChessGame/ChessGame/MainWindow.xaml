@@ -6,16 +6,12 @@
   xmlns:local="clr-namespace:ChessGame"
   xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  Title="MainWindow"
-  Width="600"
-  Height="600"
+  Title="RM Chess"
   Background="#f0ecec"
   Loaded="Window_Loaded"
   WindowState="Maximized"
   mc:Ignorable="d">
-  <!--<Window.Background>
-    <ImageBrush ImageSource="Resources/background3.jpg" />
-  </Window.Background>-->
+
   <Window.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
@@ -60,22 +56,12 @@
       <RowDefinition Height="auto" />
       <RowDefinition Height="auto" />
     </Grid.RowDefinitions>
-    <!--<Canvas>
 
-    <Image Width="600" Source="Resources/chessboard.png"/>
-    <Image Canvas.Left="18"  Canvas.Top="10" Width="65" Source="Resources/horse.png" />
-  </Canvas>-->
     <StackPanel
       Grid.Row="0"
       Margin="0"
       Background="LightGray"
       Cursor="Hand">
-      <!--<DockPanel.Background>
-        <LinearGradientBrush StartPoint="0,0.5" EndPoint="0,0">
-          <GradientStop Color="Gray"  Offset="0.19" />
-          <GradientStop Color="Gray" Offset="0.2" />
-        </LinearGradientBrush>
-      </DockPanel.Background>-->
       <Menu
         Background="Transparent"
         DockPanel.Dock="Top"
@@ -85,7 +71,7 @@
           materialDesign:ShadowAssist.Darken="True"
           Foreground="Gray"
           Header="_PLAY">
-          <MenuItem
+          <MenuItem materialDesign:ColorZoneAssist.Background="Aqua"
             Command="{Binding ResetCommand}"
             Foreground="Black"
             Header="_Reset">
@@ -132,30 +118,25 @@
       </Menu>
     </StackPanel>
 
-
-
     <Grid Grid.Row="1">
-      <!--<Button
-        Width="100"
-        Height="30"
-        HorizontalAlignment="Left"
-        VerticalAlignment="Top"
-        Command="{Binding ResetCommand}"
-        Content="Reset" />-->
-      <Label
-        HorizontalAlignment="Center"
-        Content="{Binding Message}"
-        FontFamily="Times New Roman"
-        FontSize="40"
-        FontStyle="Oblique"
-        FontWeight="DemiBold"
-        Foreground="White" />
-      <StackPanel
-        HorizontalAlignment="Center"
-        VerticalAlignment="Center"
-        Orientation="Horizontal">
-        <Image Source="Resources/chat.png" />
-        <Border BorderBrush="LightGray" BorderThickness="1">
+
+      <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Image
+          Name="Chat"
+          Grid.Column="0"
+          Margin="0,0,0,30"
+          VerticalAlignment="Top"
+          Source="Resources/chat.png" />
+        <Border
+          Grid.Column="1"
+          VerticalAlignment="Top"
+          BorderBrush="LightGray"
+          BorderThickness="1">
           <ListView
             Name="Chessboard"
             HorizontalAlignment="Center"
@@ -183,8 +164,6 @@
                   <ListView.ItemTemplate>
                     <DataTemplate>
                       <StackPanel
-                        Width="{Binding SquareSize}"
-                        Height="{Binding SquareSize}"
                         Margin="0,2.5,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
@@ -206,16 +185,19 @@
             </ListView.ItemTemplate>
           </ListView>
         </Border>
-        <Border BorderBrush="Black" BorderThickness="0">
-          <StackPanel>
+
+        <Border
+          Grid.Column="2"
+          Margin="0,0,0,30"
+          BorderBrush="Black"
+          BorderThickness="0">
+          <Grid HorizontalAlignment="Stretch">
             <Label
-              Margin="10,10,10,0"
+              Margin="10,0,10,0"
               Background="Transparent"
-              Content="Waiting for opponent..." />
+              Content="{Binding WaitingForOpponentMessage, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
             <ListBox
               x:Name="ListOfMovements"
-              Width="300"
-              Height="420"
               Margin="10,0"
               Background="White"
               Cursor="Hand"
@@ -231,21 +213,10 @@
               <ListBox.ItemTemplate>
                 <DataTemplate>
                   <StackPanel Orientation="Horizontal">
-                    <!--
-                      Width="{Binding SquareSize}"
-                      Height="{Binding SquareSize}"
-                      Margin="0,2.5,0,0"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      Background="{Binding Background}"
-                      Orientation="Vertical"
-                      Tag="{Binding Id}"
-                      ToolTip="{Binding Id}">
-                    -->
                     <Image
                       Width="{Binding IconSize}"
                       Height="{Binding IconSize}"
-                      Margin="0, 3, 0, 0"
+                      Margin="0,3,0,0"
                       VerticalAlignment="Top"
                       Source="{Binding MovementIcon, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                     <Label VerticalContentAlignment="Bottom" Content="{Binding MovementPiece}" />
@@ -254,9 +225,9 @@
                 </DataTemplate>
               </ListBox.ItemTemplate>
             </ListBox>
-          </StackPanel>
+          </Grid>
         </Border>
-      </StackPanel>
+      </Grid>
     </Grid>
 
   </Grid>

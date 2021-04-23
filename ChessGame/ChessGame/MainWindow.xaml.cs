@@ -3,20 +3,12 @@ using ChessGame.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
+using System.IO;
+using System.Reflection;
 using System.Media;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows;
 
 namespace ChessGame
 {
@@ -30,8 +22,6 @@ namespace ChessGame
     public MainWindow()
     {
       InitializeComponent();
-
-
     }
 
     private void getSelectedItem(object sender, MouseButtonEventArgs e)
@@ -53,23 +43,27 @@ namespace ChessGame
 
       viewModel.DisplayAvailableSquares(listViewItem.Content.ToString());
 
+      string fullPathToSound = (Assembly.GetEntryAssembly().Location + "");
       if (viewModel.AddMoveSound)
       {
         if (viewModel.IsPieceCaptured)
         {
-          SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click2.wav");
+          fullPathToSound = fullPathToSound.Replace("ChessGame.exe", "Resources\\capture_sound.wav");
+          SoundPlayer simpleSound = new SoundPlayer(fullPathToSound);
           simpleSound.Play();
         }
         else
         {
-          SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\click.wav");
+          fullPathToSound = fullPathToSound.Replace("ChessGame.exe", "Resources\\move_sound.wav");
+          SoundPlayer simpleSound = new SoundPlayer(fullPathToSound);
           simpleSound.Play();
         }
       }
 
-      if(viewModel.IsCheckmate)
+      if (viewModel.IsCheckmate)
       {
-        SoundPlayer simpleSound = new SoundPlayer(@"D:\GitHub\RM_Chess\ChessGame\ChessGame\Resources\checkmate.wav");
+        fullPathToSound = fullPathToSound.Replace("ChessGame.exe", "Resources\\checkmate_sound.wav");
+        SoundPlayer simpleSound = new SoundPlayer(fullPathToSound);
         simpleSound.Play();
       }
     }
@@ -113,6 +107,9 @@ namespace ChessGame
       viewModel = new MainViewModel();
       DataContext = viewModel;
       viewModel.InitializeChessBoard();
+      ListOfMovements.Width = SystemParameters.WorkArea.Width / 4;
+      Chat.Width = SystemParameters.WorkArea.Width / 4;
+      ListOfMovements.MaxHeight = SystemParameters.WorkArea.Height/1.4;
     }
   }
 }

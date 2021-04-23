@@ -45,6 +45,8 @@ namespace ChessGame.ViewModel
     public bool isFirstPlayerWhite = true;
     public Square SelectedSquare;
     public Dictionary<string, string> Movements = new Dictionary<string, string>();
+    private string waitingForOpponentMessage;
+
     public ICommand ResetCommand { get; set; }
     public ObservableCollection<ObservableCollection<Square>> EmptyChessboard { get; }
 
@@ -59,6 +61,17 @@ namespace ChessGame.ViewModel
         if (listOfMvements == value) return;
         listOfMvements = value;
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("ListOfMovements"));
+      }
+    }
+
+    public string WaitingForOpponentMessage
+    {
+      get { return waitingForOpponentMessage; }
+      set
+      {
+        if (waitingForOpponentMessage == value) return;
+        waitingForOpponentMessage = value;
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("WaitingForOpponentMessage"));
       }
     }
 
@@ -123,6 +136,141 @@ namespace ChessGame.ViewModel
 
     #endregion
 
+
+    #region Public Methods
+    public void InitializeChessBoard()
+    {
+      ChessBoard = EmptyChessboard;
+      pieces = PlaceChessPieces(chessBoard);
+      ListOfMovements.Add(new Movement("Chessboard", null, @"pack://application:,,,/ChessGame;component/Resources/chessboard.png"));
+      listOfChessBoards.Add(GetCopyOfChessboard(ChessBoard));
+      SetWaitingForOpponentMessage();
+    }
+
+
+    public void DisplayAvailableSquares(String squareId)
+    {
+      IsPieceMoved = false;
+      IsPieceCaptured = false;
+      AddMoveSound = false;
+      var previousSelectedPiece = SelectedSquare;
+      SelectedSquare = GetSelectedPiece(squareId, ChessBoard);
+
+      if (SelectedSquare == null)
+      {
+        return;
+      }
+
+      if (previousSelectedPiece != null && previousSelectedPiece.Background != null)
+      {
+        var c = mapper.StringToCoordinates[previousSelectedPiece.Id];
+        chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
+
+      }
+
+      if (CheckState != null && CheckState.Piece != null)
+      {
+        IsWhiteTurn = CheckState.Piece.IsWhite;
+      }
+
+      MakeCastle(previousSelectedPiece);
+
+      if (markedAsAvailableSquares.Contains(SelectedSquare))
+      {
+        //an available move was selected
+        AddMoveSound = true;
+
+        ClearKingBackground();
+
+        // check if the move can be made
+        if (CanPieceBeMoved(SelectedSquare, previousSelectedPiece, ChessBoard, pieces, markedAsAvailableSquares, true))
+        {
+          IsPieceMoved = true;
+          AddMoveSound = true;
+          Movements[SelectedSquare.Id] = previousSelectedPiece.Id;
+          listOfChessBoards.Add(GetCopyOfChessboard(ChessBoard));
+          noOfMovement++;
+          ListOfMovements.Add(new Movement(string.Format("{0}: {1} {2}", noOfMovement.ToString(), SelectedSquare.Piece.IsWhite ? "White" : "Black",
+            SelectedSquare.Piece.ChessPieceType), previousSelectedPiece.Id + "-" + SelectedSquare.Id, SelectedSquare.Piece.ChessPieceIcon));
+
+          IsWhiteTurn = !IsWhiteTurn;
+          if (CheckState != null)
+          {
+            CheckState.Background = CheckBackground;
+          }
+          CheckIfCheckmate(ChessBoard);
+          SetWaitingForOpponentMessage();
+        }
+        else
+        {
+          //is in chess state
+          if (CheckState != null && CheckState.Piece != null)
+          {
+            IsWhiteTurn = CheckState.Piece.IsWhite;
+            CheckState.Background = CheckBackground;
+          }
+
+        }
+        return;
+      }
+
+      //clear
+      ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
+
+      MarkAvailableSquares(previousSelectedPiece);
+
+    }
+
+    private void SetWaitingForOpponentMessage()
+    {
+      if (IsWhiteTurn)
+      {
+        WaitingForOpponentMessage = "It's your turn";
+      }
+      else
+      {
+        WaitingForOpponentMessage = "Waiting for opponent...";
+      }
+    }
+
+    private void ClearKingBackground()
+    {
+      var king = pieces.FirstOrDefault(k => k.ChessPieceType.Contains(Resources.King) && k.IsWhite == k.IsWhite);
+      if (king != null)
+      {
+        var kingSquare = GetSelectedPiece(king.Location, ChessBoard);
+        if (kingSquare != null)
+        {
+          var c = mapper.StringToCoordinates[kingSquare.Id];
+          chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
+        }
+      }
+    }
+
+    private void CheckIfCheckmate(ObservableCollection<ObservableCollection<Square>> chessBoard)
+    {
+      bool isCheckmate = true;
+      foreach (var currentPiece in pieces)
+      {
+        if (currentPiece.IsWhite != SelectedSquare.Piece.IsWhite)
+        {
+          if (!IsThereAnyMoveAvailable(currentPiece))
+          {
+            isCheckmate = false;
+          }
+        }
+      }
+      if (isCheckmate)
+      {
+        var king = pieces.FirstOrDefault(k => k.ChessPieceType.Contains(Resources.King) && k.IsWhite != SelectedSquare.Piece.IsWhite);
+        GetSelectedPiece(king.Location, chessBoard).Background = CheckBackground;
+        ListOfMovements.Add(new Movement(string.Format("{0}: Checkmate! {1} wins!", ++noOfMovement, king.IsWhite ? "Black" : "White"), null, SelectedSquare.Piece.ChessPieceIcon));
+        IsCheckmate = true;
+      }
+    }
+
+    #endregion
+
     #region Private Methods
     private void ResetCommandExecute()
     {
@@ -131,6 +279,7 @@ namespace ChessGame.ViewModel
     }
     void Execute()
     {
+      ChessBoard = new ObservableCollection<ObservableCollection<Square>>();
       ChessBoard = EmptyChessboard;
       IsCheckmate = false;
       Movements.Clear();
@@ -169,127 +318,6 @@ namespace ChessGame.ViewModel
       }
       return ClearChessBoard;
     }
-
-    #endregion
-
-
-    #region Public Methods
-    public void InitializeChessBoard()
-    {
-      ChessBoard = EmptyChessboard;
-      pieces = PlaceChessPieces(chessBoard);
-      ListOfMovements.Add(new Movement("Chessboard",null, @"pack://application:,,,/ChessGame;component/Resources/chessboard.png"));
-
-      listOfChessBoards.Add(GetCopyOfChessboard(ChessBoard));
-    }
-
-
-    public void DisplayAvailableSquares(String squareId)
-    {
-      IsPieceMoved = false;
-      IsPieceCaptured = false;
-      AddMoveSound = false;
-      var previousSelectedPiece = SelectedSquare;
-      SelectedSquare = GetSelectedPiece(squareId, ChessBoard);
-
-      if (SelectedSquare == null)
-      {
-        return;
-      }
-
-      if (previousSelectedPiece != null && previousSelectedPiece.Background != null)
-      {
-        var c = mapper.StringToCoordinates[previousSelectedPiece.Id];
-        chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
-
-      }
-
-      if (CheckState != null && CheckState.Piece != null)
-      {
-        IsWhiteTurn = CheckState.Piece.IsWhite;
-      }
-      else
-      {
-        var king = pieces.FirstOrDefault(k => k.ChessPieceType.Contains(Resources.King) && k.IsWhite == k.IsWhite);
-        if (king != null)
-        {
-          var kingSquare = GetSelectedPiece(king.Location, ChessBoard);
-          if (kingSquare != null)
-          {
-            var c = mapper.StringToCoordinates[kingSquare.Id];
-            chessBoard[c.i][c.j].Background = (c.i + c.j) % 2 == 0 ? WhiteBackground : BlackBackground;
-          }
-        }
-      }
-
-      MakeCastle(previousSelectedPiece);
-
-      if (markedAsAvailableSquares.Contains(SelectedSquare))
-      {
-        //an available move was selected
-        AddMoveSound = true;
-        // check if the move can be made
-        if (CanPieceBeMoved(SelectedSquare, previousSelectedPiece, ChessBoard, pieces, markedAsAvailableSquares, true))
-        {
-          IsPieceMoved = true;
-          AddMoveSound = true;
-          Movements[SelectedSquare.Id] = previousSelectedPiece.Id;
-          listOfChessBoards.Add(GetCopyOfChessboard(ChessBoard));
-          noOfMovement++;
-          ListOfMovements.Add(new Movement(string.Format("{0}: {1} {2}", noOfMovement.ToString(), SelectedSquare.Piece.IsWhite ? "White" : "Black",
-            SelectedSquare.Piece.ChessPieceType), previousSelectedPiece.Id + "-"+SelectedSquare.Id, SelectedSquare.Piece.ChessPieceIcon));
-
-          IsWhiteTurn = !IsWhiteTurn;
-          if (CheckState != null)
-          {
-            CheckState.Background = CheckBackground;
-          }
-          CheckIfCheckmate(ChessBoard);
-        }
-        else
-        {
-          //is in chess state
-          if (CheckState != null && CheckState.Piece != null)
-          {
-            IsWhiteTurn = CheckState.Piece.IsWhite;
-            CheckState.Background = CheckBackground;
-          }
-
-        }
-        return;
-      }
-
-      //clear
-      ClearAvailableSquares(ChessBoard, markedAsAvailableSquares);
-
-      MarkAvailableSquares(previousSelectedPiece);
-    }
-
-    private void CheckIfCheckmate(ObservableCollection<ObservableCollection<Square>> chessBoard)
-    {
-      bool isCheckmate = true;
-      foreach (var currentPiece in pieces)
-      {
-        if (currentPiece.IsWhite != SelectedSquare.Piece.IsWhite)
-        {
-          if (!IsThereAnyMoveAvailable(currentPiece))
-          {
-            isCheckmate = false;
-          }
-        }
-      }
-      if (isCheckmate)
-      {
-        var king = pieces.FirstOrDefault(k => k.ChessPieceType.Contains(Resources.King) && k.IsWhite != SelectedSquare.Piece.IsWhite);
-        GetSelectedPiece(king.Location, chessBoard).Background = CheckBackground;
-        ListOfMovements.Add(new Movement( string.Format("{0}: Checkmate! {1} wins!", ++noOfMovement, king.IsWhite ? "Black" : "White"), null, SelectedSquare.Piece.ChessPieceIcon));
-        IsCheckmate = true;
-      }
-    }
-
-    #endregion
-
-    #region Private Methods
 
     private List<ChessPiece> PlaceChessPieces(ObservableCollection<ObservableCollection<Square>> chessboard, List<ChessPiece> pieces = null)
     {
@@ -678,7 +706,7 @@ namespace ChessGame.ViewModel
       }
       return square;
     }
-
     #endregion
+
   }
 }

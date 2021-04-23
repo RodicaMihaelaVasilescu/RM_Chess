@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C6B6F40B-0BA7-4A82-86F6-33FD7C3278AC}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>ChessGame</RootNamespace>
     <AssemblyName>ChessGame</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -35,6 +35,12 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ChessGame.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MaterialDesignColors, Version=2.0.0.2422, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
@@ -158,12 +164,11 @@
     <Resource Include="Resources\ChessPieces\black_knight.png" />
     <Resource Include="Resources\ChessPieces\white_knight.png" />
     <Resource Include="Resources\chat.png" />
-    <Content Include="Resources\checkmate.wav" />
+    <Resource Include="ChessGame.ico" />
+    <Content Include="Resources\checkmate_sound.wav" />
     <Resource Include="Resources\chessboard.png" />
-    <Content Include="Resources\click.mp3" />
-    <Content Include="Resources\click.wav" />
-    <Content Include="Resources\click2.mp3" />
-    <Content Include="Resources\click2.wav" />
+    <Content Include="Resources\move_sound.wav" />
+    <Content Include="Resources\capture_sound.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.0.0\build\MaterialDesignThemes.targets')" />

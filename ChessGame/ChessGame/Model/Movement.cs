@@ -11,7 +11,7 @@ namespace ChessGame.Model
     public String MovementPiece { get; set; }
     public String MovementLocation { get; set; }
     public String MovementIcon { get; set; }
-    public double IconSize { get; set; } = 25;
+    public double IconSize { get; set; } = System.Windows.SystemParameters.WorkArea.Height/27;
     public Movement(string name, string location, string ico)
     {
       MovementPiece = name;
