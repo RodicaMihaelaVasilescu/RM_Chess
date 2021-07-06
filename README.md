@@ -1,5 +1,5 @@
 # RM_Chess
-## Inspired by Lichess.org
+## Chess Application inspired by Lichess.org
 ![alt text](Demo/RM_Chess.png)
 ## Castle
 ![alt text](Demo/Chess_Opening.gif)
